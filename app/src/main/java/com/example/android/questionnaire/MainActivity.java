@@ -17,12 +17,24 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE = "MESSAGE";
+    public static final String DISPLAY_MESSAGE = "MESSAGE";
+    public static final String SCORE = "SCORE";
+
     TextView question_text_view;
     LinearLayout optionsLinearLayout;
     Button nextButton;
+
     private int qNumber;
+    private int score;
+
+    private Options optionsType;
+    private View optionsView;
+
+    private QuestionSet questionSet;
     private ArrayList<Question> questions;
+
+    private AnswerSet answerSet;
+    private ArrayList<Answer> answers;
     /**
      * Set up a listener for when the user chooses to go to the next Question
      */
@@ -30,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             Log.v("Mainactivity", "QNumber: " + qNumber);
+            String answer = getUserAnswer(optionsView, optionsType.toString());
+            answers.add(new Answer(questions.get(qNumber - 1).getQuestion(), answer));
             if (qNumber < questions.size()) {
                 optionsLinearLayout.removeAllViews();
                 displayQuestion();
@@ -39,9 +53,12 @@ public class MainActivity extends AppCompatActivity {
              * displayed
              */
             else {
+                answerSet.validateAnswers(answers);
+                score = answerSet.getScore();
                 Intent intent = new Intent(MainActivity.this,
                         DisplayMessageActivity.class);
-                intent.putExtra(EXTRA_MESSAGE, "Thank you for completing the quiz!");
+                intent.putExtra(DISPLAY_MESSAGE, "Thank you for completing the quiz!");
+                intent.putExtra(SCORE, score);
                 startActivity(intent);
                 finish();
             }
@@ -57,7 +74,13 @@ public class MainActivity extends AppCompatActivity {
         optionsLinearLayout = findViewById(R.id.linearLayout_Options);
         nextButton = findViewById(R.id.next_button);
 
-        setUpQuestions();
+        questionSet = new QuestionSet();
+        questions = questionSet.getQuestionSet();
+
+        answerSet = new AnswerSet();
+        answers = new ArrayList<>();
+
+        answerSet.setUpAnswers();
 
         displayQuestion();
 
@@ -66,21 +89,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Set the list of questions and it's options to be displayed to the user
+     * Fetch the answer selected by the user
+     * @param view specifies the options view for the current question
+     * @param type specifies the options type for the current question
      */
-    private void setUpQuestions() {
-        questions = new ArrayList<>();
 
-        String[] hpBooks = new String[]{"Stone", "Chamber", "Azkaban", "Goblet", "Phoenix", "Prince", "Hallows"};
-        Question question1 = new Question("Favorite HP book?", hpBooks, Options.RADIOBUTTON);
-        questions.add(question1);
+    private String getUserAnswer(View view, String type) {
+        String answer = "";
+        switch (Options.valueOf(type)) {
+            case RADIOBUTTON:
+                RadioButton selectedRadioButton = findViewById(((RadioGroup) view).getCheckedRadioButtonId());
+                answer = selectedRadioButton.getText().toString();
+                break;
 
-        String[] hpCharacters = new String[]{"Harry", "Ron", "Hermione", "Dobby", "Dumbledore", "Snape"};
-        Question question2 = new Question("Favorite HP characters?", hpCharacters, Options.CHECKBOX);
-        questions.add(question2);
+            case CHECKBOX:
+                LinearLayout parentLayout = (LinearLayout) view;
+                int numOfCheckBox = parentLayout.getChildCount();
+                for (int i = 0; i < numOfCheckBox; i++) {
+                    CheckBox childCheckBox = (CheckBox) parentLayout.getChildAt(i);
+                    if (childCheckBox.isChecked())
+                        answer += childCheckBox.getText();
+                }
 
-        Question question3 = new Question("Favorite Stark kid?", Options.EDITTEXT);
-        questions.add(question3);
+                break;
+
+            case EDITTEXT:
+                EditText answerText = (EditText) view;
+                answer = answerText.getText().toString();
+                break;
+        }
+        return answer;
+
     }
 
     /**
@@ -98,9 +137,6 @@ public class MainActivity extends AppCompatActivity {
             optionsCurrentSet = currentSet.getOptions();
             Options type = currentSet.getOptionsType();
 
-            Log.v("MainActivity", "Calling displayQuestion for QuestionNo. " + qNumber
-                    + "\n\n OptionsType for QNo. " + qNumber + " is " + type.toString());
-
             displayOptions(optionsCurrentSet, type);
 
         }
@@ -115,13 +151,11 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void displayOptions(String[] options, Options optionsType) {
-        Log.v("MainActivity", "displayOptions for QNo. " + qNumber);
         int numOfOptions = 0;
         if (optionsType.equals(Options.RADIOBUTTON) || optionsType.equals(Options.CHECKBOX))
             numOfOptions = options.length;
         String type = optionsType.toString();
         Options opType = Options.valueOf(type);
-        Log.v("MainActivity", Options.valueOf(type).toString());
 
         switch (opType) {
 
@@ -132,24 +166,28 @@ public class MainActivity extends AppCompatActivity {
                     button.setText(options[i]);
                     radioGroup.addView(button);
                 }
+                optionsView = radioGroup;
                 optionsLinearLayout.addView(radioGroup);
                 break;
 
 
             case CHECKBOX:
                 for (int i = 0; i < numOfOptions; i++) {
-                    CheckBox checkBox = new CheckBox(this);
-                    checkBox.setText(options[i]);
-                    optionsLinearLayout.addView(checkBox);
+                    CheckBox checkbox = new CheckBox(this);
+                    checkbox.setText(options[i]);
+                    optionsLinearLayout.addView(checkbox);
                 }
+                optionsView = optionsLinearLayout;
                 break;
 
             case EDITTEXT:
                 EditText editText = new EditText(this);
-                editText.setHint("Enter your answer");
+                editText.setHint(R.string.editText_hint);
                 optionsLinearLayout.addView(editText);
+                optionsView = editText;
                 break;
         }
+        this.optionsType = opType;
 
     }
 }

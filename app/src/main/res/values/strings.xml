@@ -13,4 +13,5 @@
     <string name="option2_four">4</string>
     <string name="startButton">Start</string>
     <string name="welcome_text">Welcome to the Magical World of Harry Potter!</string>
+    <string name="editText_hint">Type your answer here</string>
 </resources>

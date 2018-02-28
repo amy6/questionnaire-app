@@ -13,9 +13,11 @@ public class DisplayMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_message);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String message = intent.getStringExtra(MainActivity.DISPLAY_MESSAGE);
+        int score = intent.getIntExtra(MainActivity.SCORE, 0);
 
         TextView answer = findViewById(R.id.answer_text_view);
+        message += "\n Your score is: " + score;
         answer.setText(message);
     }
 }
