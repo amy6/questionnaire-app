@@ -14,4 +14,8 @@
     <string name="startButton">Start</string>
     <string name="welcome_text">Welcome to the Magical World of Harry Potter!</string>
     <string name="editText_hint">Type your answer here</string>
+    <string name="your_answer">Your answer:</string>
+    <string name="correct_answer">Correct answer:</string>
+    <string name="score_text">Your score is:</string>
+    <string name="no_answer_error">Did you answer?</string>
 </resources>
