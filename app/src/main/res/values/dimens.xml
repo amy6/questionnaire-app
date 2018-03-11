@@ -2,4 +2,5 @@
 <resources>
     <dimen name="margin_value">16dp</dimen>
     <dimen name="card_text_margin">8dp</dimen>
+    <dimen name="card_corner_radius">3dp</dimen>
 </resources>

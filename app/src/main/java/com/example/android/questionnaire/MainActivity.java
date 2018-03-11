@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private Options optionsType;
     private View optionsView;
 
-    private QuestionSet questionSet;
     private ArrayList<Question> questions;
 
     private AnswerSet answerSet;
@@ -56,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             cancelToast();
 
             String answer = getUserAnswer(optionsView, optionsType.toString());
+            if(checkedId != null) checkedId = null;
 
             if(answer == null || answer.length()==0) {
                 displayErrorMessage();
@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.v("MainActivity", "OnCreate called");
+
         question_text_view = findViewById(R.id.question_text);
         optionsLinearLayout = findViewById(R.id.linearLayout_Options);
         nextButton = findViewById(R.id.next_button);
@@ -96,16 +98,17 @@ public class MainActivity extends AppCompatActivity {
 
         checkedId = new ArrayList<>();
 
-        questionSet = new QuestionSet();
-        questions = questionSet.getQuestionSet();
+        questions = new QuestionSet().getQuestionSet();
 
         if(savedInstanceState == null) {
+            Log.v("MainActivity", "Seems there's no bundle to restore");
             answerSet = new AnswerSet();
             userAnswers = new ArrayList<>();
 
             answerSet.setUpAnswers();
 
         } else {
+            Log.v("MainActivity", "Okay so manually restoring saved instance state!");
             restoreSavedInstanceState(savedInstanceState);
         }
 
@@ -126,15 +129,19 @@ public class MainActivity extends AppCompatActivity {
 
         answerSet = (AnswerSet) inState.getSerializable(ANSWER_SET);
 
-
-        String type = inState.getString(OPTIONS_TYPE);
-        Options opType = Options.valueOf(type);
-
         checkedId = inState.getIntegerArrayList(CHOSEN_ANSWER);
+//        Log.v("MainActivity", String.valueOf(checkedId.get(0)));
 
         editTextAnswerSet = inState.getBoolean(EDITTEXT_ANSWER_SET);
         if(editTextAnswerSet) editTextAnswer = inState.getString(EDITTEXT_ANSWER);
 
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.v("MainActivity", "Restore instance state is called");
     }
 
     /**
@@ -144,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private String getUserAnswer(View view, String type) {
-        String answer = "";
+        StringBuilder answer = new StringBuilder();
         switch (Options.valueOf(type)) {
             case RADIOBUTTON:
 
@@ -154,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     return null;
                 }
                 else
-                    answer = selectedRadioButton.getText().toString();
+                    answer = new StringBuilder(selectedRadioButton.getText().toString());
                 break;
 
             case CHECKBOX:
@@ -163,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < numOfCheckBox; i++) {
                     CheckBox childCheckBox = (CheckBox) parentLayout.getChildAt(i);
                     if (childCheckBox.isChecked()) {
-                        answer += childCheckBox.getText() + " ";
+                        answer.append(childCheckBox.getText()).append(" ");
                     }
                 }
 
@@ -171,10 +178,10 @@ public class MainActivity extends AppCompatActivity {
 
             case EDITTEXT:
                 EditText answerText = (EditText) view;
-                answer = answerText.getText().toString();
+                answer = new StringBuilder(answerText.getText().toString());
                 break;
         }
-        return answer;
+        return answer.toString();
 
     }
 
@@ -238,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < numOfOptions; i++) {
                     RadioButton button = new RadioButton(this);
                     button.setText(options[i]);
+                    button.setId(i);
                     radioGroup.addView(button);
 
                     if(checkedId.size() > 0 && i==checkedId.get(0)) {
@@ -256,9 +264,12 @@ public class MainActivity extends AppCompatActivity {
                     checkbox.setText(options[i]);
                     optionsLinearLayout.addView(checkbox);
 
-                    if(checkedId.size() > 0 && checkedId.indexOf(i) != -1) {
-                        checkbox.setChecked(true);
+                    if(checkedId != null) {
+                        if(checkedId.size() > 0 && checkedId.indexOf(i) != -1) {
+                            checkbox.setChecked(true);
+                        }
                     }
+
 
                 }
                 optionsView = optionsLinearLayout;
@@ -269,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(editTextAnswerSet) {
                     editText.setText(editTextAnswer);
+                    editText.setSelection(editTextAnswer.length());
                 } else {
                     editText.setHint(R.string.editText_hint);
                 }
@@ -291,6 +303,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        checkedId = new ArrayList<>();
+
+        Log.v("MainActivity", "Inside SaveInstanceState");
+
         outState.putInt(QUESTION_NUMBER, qNumber);
         outState.putStringArrayList(USER_ANSWER, userAnswers);
         outState.putSerializable(ANSWER_SET, answerSet);
@@ -309,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
                     editTextAnswerSet = true;
                     outState.putString(EDITTEXT_ANSWER, String.valueOf(text.getText()));
                     outState.putBoolean(EDITTEXT_ANSWER_SET, editTextAnswerSet);
+                    Log.v("MainActivity", "Text entered in EditText is :" + String.valueOf(text.getText()));
                 }
                 break;
 
@@ -318,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=0 ; i<count; i++) {
                     checkBoxes[i] = (CheckBox) optionsLinearLayout.getChildAt(i);
                     if(checkBoxes[i].isChecked()) {
+                        Log.v("MainActivity", "Checkbox selected: " + checkBoxes[i].getText());
                         checkedId.add(i);
                     }
                 }
@@ -327,7 +345,8 @@ public class MainActivity extends AppCompatActivity {
                 RadioButton selectedRadioButton = findViewById(((RadioGroup) optionsLinearLayout.getChildAt(0))
                         .getCheckedRadioButtonId());
                 if(selectedRadioButton != null) {
-                    checkedId.add(selectedRadioButton.getId());
+                    Log.v("MainActivity", "RadioButton selected: " + String.valueOf((selectedRadioButton.getId())));
+                    checkedId.add((selectedRadioButton.getId()));
                 }
 
                 break;
@@ -336,4 +355,35 @@ public class MainActivity extends AppCompatActivity {
         outState.putIntegerArrayList(CHOSEN_ANSWER, checkedId);
 
     }
+
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        Log.v("MainActivity", "OnPause called");
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        Log.v("MainActivity", "OnStop called");
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Log.v("MainActivity", "OnResume called");
+//    }
+//
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        Log.v("MainActivity", "OnRestart called");
+//    }
+//
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        Log.v("MainActivity", "OnStart called");
+//    }
 }
