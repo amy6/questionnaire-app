@@ -36,6 +36,15 @@ public class AnswerSet implements Serializable{
 
         Answer answer3 = new Answer("Favorite Stark kid?", "Arya");
         answers.add(answer3);
+
+        Answer answer4 = new Answer("Favorite Avenger?", "Snape");
+        answers.add(answer4);
+
+        Answer answer5 = new Answer("Favorite GOT characters?", "Ron Dobby");
+        answers.add(answer5);
+
+        Answer answer6 = new Answer("Favorite ABND scholar?", "Harry");
+        answers.add(answer6);
     }
 
     public void validate(ArrayList<String> userAnswers) {

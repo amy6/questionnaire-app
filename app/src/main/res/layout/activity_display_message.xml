@@ -2,13 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
     tools:context="com.example.android.questionnaire.DisplayMessageActivity">
 
     <TextView
         android:id="@+id/answer_text_view"
         style="@style/CardViewText"
-        tools:text="Display Message"/>
+        android:text="Your score is "
+        android:textColor="@android:color/white" />
     
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

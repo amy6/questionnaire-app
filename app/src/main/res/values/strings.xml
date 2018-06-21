@@ -18,4 +18,5 @@
     <string name="correct_answer">Correct answer:</string>
     <string name="score_text">Your score is:</string>
     <string name="no_answer_error">Did you answer?</string>
+    <string name="prevQuestion">Previous</string>
 </resources>
