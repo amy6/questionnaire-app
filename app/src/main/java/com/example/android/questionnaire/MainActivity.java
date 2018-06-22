@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
 
+            Log.d(LOG_TAG, "Next Button has been clicked");
+
             if(checkedId != null) checkedId = null;
             if (editTextAnswer != null) {
                 editTextAnswer = null;
@@ -74,8 +76,9 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
+            Log.d(LOG_TAG, "Incrementing the QNo by 1");
+            qNumber++;
             if (qNumber < questions.size()) {
-                optionsLinearLayout.removeAllViews();
                 displayQuestion(qNumber);
             }
 
@@ -93,17 +96,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            Log.d(LOG_TAG, "QNumber is ---------------->-------------> " + (qNumber - 1));
+            Log.d(LOG_TAG, "Prev Button has been clicked");
 
-            int currentQNo = qNumber - 1;
+            int currentQNo = qNumber;
             Question currentQuestion = questions.get(currentQNo);
             String[] currentOptions = currentQuestion.getOptions();
             ArrayList<Integer> currentAnswer = new ArrayList<>();
             String currentEditTextAnswer = null;
 
+            Log.d(LOG_TAG, "Saving answer for current Question with number " + currentQNo);
+
             switch (optionsType) {
                 case EDITTEXT:
-                    Log.d(LOG_TAG, "----------EditText Type prev questions------------");
+                    Log.d(LOG_TAG, "----------EditText Type current questions------------");
                     EditText editText = (EditText) optionsLinearLayout.getChildAt(0);
                     if (editText.getText() != null) {
                         currentEditTextAnswer = editText.getText().toString();
@@ -112,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     currentQuestion.setUserAnswer(currentEditTextAnswer);
                     break;
                 case CHECKBOX:
-                    Log.d(LOG_TAG, "------------Checkbox Type prev questions-----------");
+                    Log.d(LOG_TAG, "------------Checkbox Type current questions-----------");
                     for (int i = 0; i < currentOptions.length; i++) {
                         CheckBox checkBox = (CheckBox) optionsLinearLayout.getChildAt(i);
                         if (checkBox.isChecked()) {
@@ -123,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     currentQuestion.setUserSetAnswerId(currentAnswer);
                     break;
                 case RADIOBUTTON:
-                    Log.d(LOG_TAG, "-----------RadioButton Type prev questions------------");
+                    Log.d(LOG_TAG, "-----------RadioButton Type current questions------------");
                     RadioGroup radioGroup = (RadioGroup) optionsLinearLayout.getChildAt(0);
                     for (int j = 0; j < radioGroup.getChildCount(); j++) {
                         RadioButton radioButton = (RadioButton) radioGroup.getChildAt(j);
@@ -136,40 +141,46 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
 
-            if (qNumber > 1) {
-                qNumber -= 2;
+            if (qNumber > 0) {
+                qNumber -= 1;
                 optionsLinearLayout.removeAllViews();
+                if (checkedId != null) checkedId = null;
                 displayQuestion(qNumber);
-                Question prevQuestion = questions.get(qNumber - 1);
+                Question prevQuestion = questions.get(qNumber);
                 Options optionsType = prevQuestion.getOptionsType();
 
-                cancelToast();
-                toast = Toast.makeText(MainActivity.this, "Question is : " + prevQuestion.getQuestion(), Toast.LENGTH_SHORT);
-                toast.show();
-                Log.d(LOG_TAG, "Question for current QNo : " + qNumber + " is " + prevQuestion.getQuestion());
+//                cancelToast();
+//                toast = Toast.makeText(MainActivity.this, "Question is : " + prevQuestion.getQuestion(), Toast.LENGTH_SHORT);
+//                toast.show();
+                Log.d(LOG_TAG, "Displaying question for previous clicked QNo : " + qNumber + " is " + prevQuestion.getQuestion());
 
                 switch (optionsType) {
                     case RADIOBUTTON:
-                        int rbSelectedId = prevQuestion.getUserSetAnswerId().get(0);
-                        RadioGroup radioGroup = (RadioGroup) optionsLinearLayout.getChildAt(0);
-                        RadioButton radioButton = (RadioButton) radioGroup.getChildAt(rbSelectedId);
-                        radioButton.setChecked(true);
+                        Log.d(LOG_TAG, "-----------RadioButton Type prev questions------------");
+                        if (prevQuestion.getUserSetAnswerId() != null) {
+                            int rbSelectedId = prevQuestion.getUserSetAnswerId().get(0);
+                            RadioGroup radioGroup = (RadioGroup) optionsLinearLayout.getChildAt(0);
+                            RadioButton radioButton = (RadioButton) radioGroup.getChildAt(rbSelectedId);
+                            radioButton.setChecked(true);
+                        }
                         break;
                     case CHECKBOX:
-                        ArrayList<Integer> cbSelectedId = (ArrayList<Integer>) prevQuestion.getUserSetAnswerId();
-                        for (int index : cbSelectedId) {
-                            CheckBox checkBox = (CheckBox) optionsLinearLayout.getChildAt(index);
-                            checkBox.setChecked(true);
+                        Log.d(LOG_TAG, "------------Checkbox Type prev - now questions-----------");
+                        if (prevQuestion.getUserSetAnswerId() != null) {
+                            ArrayList<Integer> cbSelectedId = (ArrayList<Integer>) prevQuestion.getUserSetAnswerId();
+                            for (int index : cbSelectedId) {
+                                CheckBox checkBox = (CheckBox) optionsLinearLayout.getChildAt(index);
+                                checkBox.setChecked(true);
+                            }
                         }
                         break;
                     case EDITTEXT:
-                        Log.d(LOG_TAG, "Previous button clicked. EditText case!");
-                        String editTextAnswer = prevQuestion.getUserAnswer();
-                        cancelToast();
-                        toast = Toast.makeText(MainActivity.this, "Fetching answer from object : " + editTextAnswer, Toast.LENGTH_SHORT);
-                        toast.show();
-                        EditText editText = (EditText) (optionsLinearLayout.getChildAt(0));
-                        editText.setText(editTextAnswer);
+                        Log.d(LOG_TAG, "----------EditText Type prev questions------------");
+                        if (prevQuestion.getUserAnswer() != null) {
+                            String editTextAnswer = prevQuestion.getUserAnswer();
+                            EditText editText = (EditText) (optionsLinearLayout.getChildAt(0));
+                            editText.setText(editTextAnswer);
+                        }
                         break;
                 }
             } else {
@@ -183,12 +194,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveUserAnswer(View optionsView, String optionsType) {
 
-        Question currentQuestion = questions.get(qNumber - 1);
+        Question currentQuestion = questions.get(qNumber);
         ArrayList<Integer> userSelectedAnswers = new ArrayList<>();
 
         String answer;
 
-        Log.d(LOG_TAG, "Options type is : " + optionsType);
+        Log.d(LOG_TAG, "Saving the answers after Next button was clicked. Options type is : " + optionsType);
 
         switch (Options.valueOf(optionsType)) {
             case RADIOBUTTON:
@@ -200,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 } else {
                     userSelectedAnswers.add(selectedId);
-//                    Toast.makeText(MainActivity.this, "Adding ID : " + selectedId + " for QNo: " + qNumber, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "RadioButton Adding ID : " + selectedId + " for QNo: " + qNumber, Toast.LENGTH_SHORT).show();
 //                    Toast.makeText(MainActivity.this, "Size of arraylist: " + userSelectedAnswers.size(), Toast.LENGTH_SHORT).show();
                     currentQuestion.setUserSetAnswerId(userSelectedAnswers);
                     answered = true;
@@ -214,19 +225,18 @@ public class MainActivity extends AppCompatActivity {
                     CheckBox childCheckBox = (CheckBox) parentLayout.getChildAt(i);
                     if (childCheckBox.isChecked()) {
                         userSelectedAnswers.add(i);
-//                        Toast.makeText(MainActivity.this, "Adding ID : " + i + " for QNo: " + qNumber, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, "CheckBox Adding ID : " + i + " for QNo: " + qNumber, Toast.LENGTH_SHORT).show();
                         answered = true;
                     }
-//                    Toast.makeText(MainActivity.this, "Size of arraylist: " + userSelectedAnswers.size(), Toast.LENGTH_SHORT).show();
-                    currentQuestion.setUserSetAnswerId(userSelectedAnswers);
                 }
-
+//                Toast.makeText(MainActivity.this, "Size of arraylist: " + userSelectedAnswers.size(), Toast.LENGTH_SHORT).show();
+                currentQuestion.setUserSetAnswerId(userSelectedAnswers);
                 break;
 
             case EDITTEXT:
                 EditText answerText = (EditText) optionsView;
                 answer = answerText.getText().toString();
-                Log.d(LOG_TAG, "Answer typed is: " + answer);
+//                Toast.makeText(MainActivity.this, "EditText Saving answer : " + answer, Toast.LENGTH_SHORT).show();
                 if (!TextUtils.isEmpty(answer)) {
                     currentQuestion.setUserAnswer(answer);
                     answered = true;
@@ -301,13 +311,14 @@ public class MainActivity extends AppCompatActivity {
     private void restoreSavedInstanceState(Bundle savedInstanceState) {
 
         qNumber = savedInstanceState.getInt(QUESTION_NUMBER);
-        qNumber--;
+//        qNumber--;
 
         editTextAnswerSet = savedInstanceState.getBoolean(EDITTEXT_ANSWER_SET);
         if (editTextAnswerSet) editTextAnswer = savedInstanceState.getString(EDITTEXT_ANSWER);
 
         checkedId = savedInstanceState.getIntegerArrayList(CHOSEN_ANSWER);
 
+        questions = (ArrayList<Question>) savedInstanceState.getSerializable(QUESTIONS);
     }
 
     @Override
@@ -341,10 +352,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void displayQuestion(int questionNumber) {
 
-        String text = (questionNumber + 1) + "/" + totalQuestions;
+        String text = (qNumber + 1) + "/" + totalQuestions;
         numOfQuestionsTextView.setText(text);
 
-        progressBar.setProgress(questionNumber);
+        progressBar.setProgress(qNumber);
 
         if (answered)
             answered = false;
@@ -353,21 +364,18 @@ public class MainActivity extends AppCompatActivity {
         String[] optionsCurrentSet;
 
         optionsLinearLayout.removeAllViews();
-        qNumber = questionNumber;
+//        qNumber = questionNumber;
 
         Log.d(LOG_TAG, "In displayQuestion method ---> Current Question Number is: " + qNumber);
 
-        if (qNumber < questions.size()) {
+//        if (qNumber < questions.size()) {
             currentSet = questions.get(qNumber);
-            Log.d(LOG_TAG, "In displayQuestion method ---> QNo has been incremented by 1. Next Question Number is: " + qNumber);
             questionTextView.setText(currentSet.getQuestion());
             optionsCurrentSet = currentSet.getOptions();
             Options type = currentSet.getOptionsType();
 
             displayOptions(optionsCurrentSet, type);
-
-            qNumber++;
-        }
+//        }
 
     }
 
@@ -393,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
         switch (opType) {
 
             case RADIOBUTTON:
-
+                Log.d(LOG_TAG, "Displaying RadioButtons Options");
                 RadioGroup radioGroup = new RadioGroup(this);
                 for (int i = 0; i < numOfOptions; i++) {
                     RadioButton button = new RadioButton(this);
@@ -411,11 +419,8 @@ public class MainActivity extends AppCompatActivity {
                 optionsLinearLayout.addView(radioGroup);
 
                 if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
-                    Log.d(LOG_TAG, "Entered the if condition! But still it's not working ? ");
                     RadioButton radioButton = (RadioButton) radioGroup.getChildAt(question.getUserSetAnswerId().get(0));
                     radioButton.setChecked(true);
-                } else {
-                    Log.d(LOG_TAG, "Sorry it's really not working ! ");
                 }
 
                 optionsView = radioGroup;
@@ -423,6 +428,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             case CHECKBOX:
+                Log.d(LOG_TAG, "Displaying Checkboxes Options");
                 for (int i = 0; i < numOfOptions; i++) {
                     CheckBox checkbox = new CheckBox(this);
                     checkbox.setText(options[i]);
@@ -444,6 +450,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case EDITTEXT:
+                Log.d(LOG_TAG, "Displaying EditText Options");
                 EditText editText = new EditText(this);
                 if (TextUtils.isDigitsOnly(questions.get(qNumber).getAnswer())) {
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -489,6 +496,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(EDITTEXT_ANSWER, editTextAnswer);
         outState.putBoolean(EDITTEXT_ANSWER_SET, editTextAnswerSet);
         outState.putIntegerArrayList(CHOSEN_ANSWER, checkedId);
+        outState.putSerializable(QUESTIONS, questions);
     }
 
     private void fetchSavedAnswers() {

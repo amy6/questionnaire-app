@@ -14,10 +14,6 @@ import static com.example.android.questionnaire.MainActivity.QUESTIONS;
 
 public class DisplayMessageActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private QuizStatsAdapter quizStatsAdapter;
-    private ArrayList<String> userAnswerList;
-    private AnswerSet answerSet;
     private ArrayList<Question> questions;
     private boolean[] validateAnswers;
     private int score;
@@ -38,48 +34,11 @@ public class DisplayMessageActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.answer_text_view);
         textView.append(String.valueOf(score));
 
-        /*HashMap<String, String> answers = new HashMap<>();
+        QuizStatsAdapter quizStatsAdapter = new QuizStatsAdapter(DisplayMessageActivity.this, questions, validateAnswers);
 
-        for(int i=0; i<questions.size(); i++) {
-            Question question = questions.get(i);
-            if(question.getOptionsType().equals(EDITTEXT)) {
-                answers.put(question.getAnswer(), question.getUserAnswer());
-            }
-            else if (question.getOptionsType().equals(CHECKBOX) || question.getOptionsType().equals(RADIOBUTTON)) {
-                String[] options = question.getOptions();
-                StringBuilder correctAnswer = new StringBuilder();
-                StringBuilder userAnswer = new StringBuilder();
-                for(int index : question.getUserSetAnswerId()) {
-                    correctAnswer.append(options[question.getAnswerId().get(index)]);
-                    userAnswer.append(options[question.getUserSetAnswerId().get(index)]);
-                }
-                answers.put(correctAnswer.toString(), userAnswer.toString());
-            }
-        }*/
-
-
-        quizStatsAdapter = new QuizStatsAdapter(DisplayMessageActivity.this, questions, validateAnswers);
-
-        recyclerView = findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(quizStatsAdapter);
-
-
-        /*Intent intent = getIntent();
-
-        userAnswerList = intent.getStringArrayListExtra(MainActivity.USER_ANSWER);
-        answerSet = (AnswerSet) intent.getSerializableExtra(MainActivity.ANSWER_SET);
-        int score = answerSet.getScore();
-
-        TextView answer = findViewById(R.id.answer_text_view);
-        String message = getString(R.string.score_text) + score;
-        answer.setText(message);
-
-        quizStatsAdapter = new QuizStatsAdapter(userAnswerList, answerSet);
-
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(quizStatsAdapter);*/
 
     }
 
@@ -95,7 +54,6 @@ public class DisplayMessageActivity extends AppCompatActivity {
                     if (count == question.getUserSetAnswerId().size()) {
                         Log.d(LOG_TAG, "Number of options selected are indeed equal: " + count);
                         for (int index : question.getAnswerId()) {
-//                            Log.d(LOG_TAG, question.getAnswerId().get(index) + "\t" + question.getUserSetAnswerId().get(index));
                             if (question.getUserSetAnswerId().contains(index)) {
                                 count--;
                             }
