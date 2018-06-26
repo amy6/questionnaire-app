@@ -13,6 +13,8 @@ public class Question implements Serializable {
     private List<Integer> answerId;
     private String userAnswer;
     private List<Integer> userSetAnswerId;
+    private boolean markedForReview;
+    private int qNumber;
 
     public Question(String question, Options optionsType, String answer) {
         this.question = question;
@@ -25,6 +27,12 @@ public class Question implements Serializable {
         this.optionsType = optionsType;
         this.options = options;
         this.answerId = answerId;
+    }
+
+    public Question(String question, String answer, int qNumber) {
+        this.question = question;
+        this.answer = answer;
+        this.qNumber = qNumber;
     }
 
     /*public Question(String question, Options optionsType) {
@@ -92,5 +100,22 @@ public class Question implements Serializable {
 
     public void setOptions(String[] options) {
         this.options = options;
+    }
+
+
+    public boolean isMarkedForReview() {
+        return markedForReview;
+    }
+
+    public void setMarkedForReview(boolean markedForReview) {
+        this.markedForReview = markedForReview;
+    }
+
+    public int getqNumber() {
+        return qNumber;
+    }
+
+    public void setqNumber(int qNumber) {
+        this.qNumber = qNumber;
     }
 }

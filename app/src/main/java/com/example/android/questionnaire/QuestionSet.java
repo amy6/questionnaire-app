@@ -2,52 +2,40 @@ package com.example.android.questionnaire;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static com.example.android.questionnaire.Options.CHECKBOX;
+import static com.example.android.questionnaire.Options.RADIOBUTTON;
 
 public class QuestionSet {
-
-    //com.example.android.questionnaire.QuestionSet -> Represents all questions and options (Array of QuestionAndOptions objects)
-
-    //AnswerSetService - submitAnswer(Array<QuestionAndAnswer> array)
-
-    ArrayList<Question> questions;
 
     /**
      * Set the list of questions and it's options to be displayed to the user
      */
-    public ArrayList<Question> getQuestionSet() {
-        questions = new ArrayList<>();
+    public static ArrayList<Question> getQuestionSet() {
+        ArrayList<Question> questions = new ArrayList<>();
 
-        /*Question question1 = new Question("Which famous person does Phoebe believe is her grandfather?", Options.RADIOBUTTON, new String[]{"Albert Einstein", "Isaac Newton", "Winston Churchill", "Beethoven"}, new int[]{0});
+        Question question1 = new Question("Which famous person does Phoebe believe is her grandfather?", RADIOBUTTON, new String[]{"Albert Einstein", "Isaac Newton", "Winston Churchill", "Beethoven"}, Collections.singletonList(0));
         questions.add(question1);
 
-        Question question2 = new Question("Who among the following belong to the Targaryen family?", Options.CHECKBOX, new String[]{"Aemon", "Rhaegar", "Ned", "Robb"}, new int[]{0,1});
+        Question question2 = new Question("Who among the following belong to the Targaryen family?", Options.CHECKBOX, new String[]{"Aemon", "Rhaegar", "Ned", "Robb"}, Arrays.asList(0, 1));
         questions.add(question2);
 
-        Question question3 = new Question("What is Sheldon's middle name?", Options.EDITTEXT, "Leonard");
-        questions.add(question3);*/
+        Question question3 = new Question("What is Sheldon's middle name?", Options.EDITTEXT, "Lee");
+        questions.add(question3);
 
-       /* String[] hpBooks = new String[]{"Stone", "Chamber", "Azkaban", "Goblet", "Phoenix", "Prince", "Hallows"};
-        Question question11 = new Question("Favorite HP book?", hpBooks, Options.RADIOBUTTON);
-        questions.add(question11);
+        Question question4 = new Question("What is Pied Piper?", RADIOBUTTON, new String[]{"A book", "A scary story", "A song", "A company", "A bank"}, Collections.singletonList(3));
+        questions.add(question4);
 
-        String[] hpCharacters = new String[]{"Harry", "Ron", "Hermione", "Dobby", "Dumbledore", "Snape"};
-        Question question12 = new Question("Favorite HP characters?", hpCharacters, Options.CHECKBOX);
-        questions.add(question12);
+        Question question5 = new Question("Which of the following are the names of fictional characters from Dan Brown novels?", CHECKBOX, new String[]{"Sophie Neveu", "Vittoria Vetra", "Nick Adams", "Robert Langdon"}, Arrays.asList(0, 1, 3));
+        questions.add(question5);
 
-        Question question13 = new Question("Favorite Stark kid?", Options.EDITTEXT);
-        questions.add(question13);
+        Question question6 = new Question("What color is \"The Incredible Hulk\"?", RADIOBUTTON, new String[]{"purple", "green", "blue", "grey"}, Collections.singletonList(1));
+        questions.add(question6);
 
-        String[] avengerCharacters = new String[]{"Harry", "Ron", "Hermione", "Dobby", "Dumbledore", "Snape"};
-        Question question14 = new Question("Favorite Avenger?", avengerCharacters, Options.RADIOBUTTON);
-        questions.add(question14);
-
-        String[] gotCharacters = new String[]{"Harry", "Ron", "Hermione", "Dobby", "Dumbledore", "Snape"};
-        Question question15 = new Question("Favorite GOT characters?", gotCharacters, Options.CHECKBOX);
-        questions.add(question15);
-
-        String[] abndCharacters = new String[]{"Harry", "Ron", "Hermione", "Dobby", "Dumbledore", "Snape"};
-        Question question16 = new Question("Favorite ABND scholar?", abndCharacters, Options.RADIOBUTTON);
-        questions.add(question16);*/
+        Question question7 = new Question("How many seasons are there in the TV series Breaking Bad?", Options.EDITTEXT, "5");
+        questions.add(question7);
 
         return questions;
     }

@@ -3,6 +3,7 @@ package com.example.android.questionnaire;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,23 +29,6 @@ public class QuizStatsAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         CardViewHolder cardViewHolder = (CardViewHolder) holder;
 
-        /*ArrayList<Answer> correctAnswers = answerSet.getAnswers();
-        Answer answer = correctAnswers.get(position);
-
-        int[] answerIndex = answerSet.getIndex();
-        String answerText = answer.getAnswer();
-
-        cardViewHolder.questionTextView.setText(answer.getQuestion());
-
-        cardViewHolder.userAnswerTextView.setTextColor(Color.GREEN);
-        cardViewHolder.correctAnswerTextView.setText(answerText);
-
-        if (answerIndex[position] == -1) {
-            answerText = userAnswers.get(position);
-            cardViewHolder.userAnswerTextView.setTextColor(Color.RED);
-        }
-        cardViewHolder.userAnswerTextView.setText(answerText);*/
-
         Question question = questions.get(position);
 
         cardViewHolder.questionTextView.setText(question.getQuestion());
@@ -58,10 +42,12 @@ public class QuizStatsAdapter extends RecyclerView.Adapter {
         switch (optionsType) {
             case RADIOBUTTON:
                 correctAnswer.append(options[question.getAnswerId().get(0)]);
-                if (correctAnswers[position]) {
-                    userAnswer = correctAnswer;
-                } else {
-                    userAnswer.append(options[question.getUserSetAnswerId().get(0)]);
+                if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
+                    if (correctAnswers[position]) {
+                        userAnswer = correctAnswer;
+                    } else {
+                        userAnswer.append(options[question.getUserSetAnswerId().get(0)]);
+                    }
                 }
                 break;
             case CHECKBOX:
@@ -69,27 +55,31 @@ public class QuizStatsAdapter extends RecyclerView.Adapter {
                     if (i > 0) correctAnswer.append(", ");
                     correctAnswer.append(options[question.getAnswerId().get(i)]);
                 }
-                if (correctAnswers[position]) {
-                    userAnswer = correctAnswer;
-                } else {
-                    for (int j = 0; j < question.getUserSetAnswerId().size(); j++) {
-                        if (j > 0) userAnswer.append(", ");
-                        userAnswer.append(options[question.getUserSetAnswerId().get(j)]);
+                if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
+                    if (correctAnswers[position]) {
+                        userAnswer = correctAnswer;
+                    } else {
+                        for (int j = 0; j < question.getUserSetAnswerId().size(); j++) {
+                            if (j > 0) userAnswer.append(", ");
+                            userAnswer.append(options[question.getUserSetAnswerId().get(j)]);
+                        }
                     }
                 }
                 break;
             case EDITTEXT:
                 correctAnswer.append(question.getAnswer());
-                if (correctAnswers[position]) {
-                    userAnswer = correctAnswer;
-                } else {
-                    userAnswer.append(question.getUserAnswer().substring(0, 1).toUpperCase()).append(question.getUserAnswer().substring(1));
+                if (!TextUtils.isEmpty(question.getUserAnswer())) {
+                    if (correctAnswers[position]) {
+                        userAnswer = correctAnswer;
+                    } else {
+                        userAnswer.append(question.getUserAnswer().substring(0, 1).toUpperCase()).append(question.getUserAnswer().substring(1));
+                    }
                 }
                 break;
         }
 
         cardViewHolder.correctAnswerTextView.setText(correctAnswer);
-        cardViewHolder.userAnswerTextView.setText(userAnswer);
+        cardViewHolder.userAnswerTextView.setText(TextUtils.isEmpty(userAnswer) ? "Unanswered" : userAnswer);
         if (correctAnswers[position]) {
             cardViewHolder.userAnswerTextView.setTextColor(Color.GREEN);
         } else {
@@ -97,11 +87,6 @@ public class QuizStatsAdapter extends RecyclerView.Adapter {
         }
 
 
-    }
-
-    QuizStatsAdapter(ArrayList<String> userAnswers, AnswerSet answerSet) {
-        this.userAnswers = userAnswers;
-        this.answerSet = answerSet;
     }
 
     @Override

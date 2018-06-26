@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -27,7 +28,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
         validateAnswers = validateAnswers();
 
         for (boolean b : validateAnswers) {
-            Log.d(LOG_TAG, String.valueOf(b));
+            Log.d(LOG_TAG, "Validating answers: Value is:" + String.valueOf(b));
             if (b) score++;
         }
 
@@ -49,28 +50,34 @@ public class DisplayMessageActivity extends AppCompatActivity {
             Options opType = question.getOptionsType();
             switch (opType) {
                 case CHECKBOX:
-                    int count = question.getAnswerId().size();
-                    Log.d(LOG_TAG, "Number of options to be selected: " + count);
-                    if (count == question.getUserSetAnswerId().size()) {
-                        Log.d(LOG_TAG, "Number of options selected are indeed equal: " + count);
-                        for (int index : question.getAnswerId()) {
-                            if (question.getUserSetAnswerId().contains(index)) {
-                                count--;
+                    if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
+                        int count = question.getAnswerId().size();
+                        Log.d(LOG_TAG, "Number of options to be selected: " + count);
+                        if (count == question.getUserSetAnswerId().size()) {
+                            Log.d(LOG_TAG, "Number of options selected are indeed equal: " + count);
+                            for (int index : question.getAnswerId()) {
+                                if (question.getUserSetAnswerId().contains(index)) {
+                                    count--;
+                                }
                             }
                         }
-                    }
-                    if (count == 0) {
-                        validateAnswers[i] = true;
+                        if (count == 0) {
+                            validateAnswers[i] = true;
+                        }
                     }
                     break;
                 case EDITTEXT:
-                    if (question.getAnswer().equalsIgnoreCase(question.getUserAnswer())) {
-                        validateAnswers[i] = true;
+                    if (!TextUtils.isEmpty(question.getUserAnswer())) {
+                        if (question.getAnswer().equalsIgnoreCase(question.getUserAnswer())) {
+                            validateAnswers[i] = true;
+                        }
                     }
                     break;
                 case RADIOBUTTON:
-                    if (question.getAnswerId().get(0).equals(question.getUserSetAnswerId().get(0))) {
-                        validateAnswers[i] = true;
+                    if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
+                        if (question.getAnswerId().get(0).equals(question.getUserSetAnswerId().get(0))) {
+                            validateAnswers[i] = true;
+                        }
                     }
                     break;
             }

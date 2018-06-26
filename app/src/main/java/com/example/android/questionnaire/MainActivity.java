@@ -2,14 +2,17 @@ package com.example.android.questionnaire;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -18,15 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
-import static com.example.android.questionnaire.Options.CHECKBOX;
 import static com.example.android.questionnaire.Options.RADIOBUTTON;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String QUESTION_NUMBER = "QUESTION_NUMBER";
+    public static final String QUESTION_NUMBER = "QUESTION_NUMBER";
     private static final String CHOSEN_ANSWER = "CHOSEN_ANSWER";
     private static final String EDITTEXT_ANSWER = "EDIT_TEXT_ANSWER";
     private static final String EDITTEXT_ANSWER_SET = "EDIT_TEXT_ANSWER_SET";
@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView numOfQuestionsTextView;
     private LinearLayout optionsLinearLayout;
     private ProgressBar progressBar;
+    private Button nextButton;
+    private Button prevButton;
+    private TextView timer;
 
     private int qNumber;
     private int totalQuestions;
@@ -52,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean answered;
 
     private Toast toast;
-
-
+    private CountDownTimer counter;
+    private long timeRemaining;
+    private TextView reviewTextView;
     /**
      * Set up a listener for when the user chooses to go to the next Question
      * - start a new activity displaying quiz stats when all questions are done
@@ -78,17 +82,19 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d(LOG_TAG, "Incrementing the QNo by 1");
             qNumber++;
+            if (qNumber > 0) {
+                prevButton.setEnabled(true);
+            }
+            if (qNumber == questions.size() - 1) {
+                nextButton.setText("Submit");
+            }
             if (qNumber < questions.size()) {
                 displayQuestion(qNumber);
-            }
-
-            else {
-
-                Intent intent = new Intent(MainActivity.this,
-                        DisplayMessageActivity.class);
-                intent.putExtra(QUESTIONS, questions);
-                startActivity(intent);
-                finish();
+            } else {
+                if (counter != null) {
+                    counter.cancel();
+                }
+                displayResults();
             }
         }
     };
@@ -98,48 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d(LOG_TAG, "Prev Button has been clicked");
 
-            int currentQNo = qNumber;
-            Question currentQuestion = questions.get(currentQNo);
-            String[] currentOptions = currentQuestion.getOptions();
-            ArrayList<Integer> currentAnswer = new ArrayList<>();
-            String currentEditTextAnswer = null;
-
-            Log.d(LOG_TAG, "Saving answer for current Question with number " + currentQNo);
-
-            switch (optionsType) {
-                case EDITTEXT:
-                    Log.d(LOG_TAG, "----------EditText Type current questions------------");
-                    EditText editText = (EditText) optionsLinearLayout.getChildAt(0);
-                    if (editText.getText() != null) {
-                        currentEditTextAnswer = editText.getText().toString();
-                    }
-                    Log.d(LOG_TAG, "EditText Case ------ Saving answer: " + currentEditTextAnswer);
-                    currentQuestion.setUserAnswer(currentEditTextAnswer);
-                    break;
-                case CHECKBOX:
-                    Log.d(LOG_TAG, "------------Checkbox Type current questions-----------");
-                    for (int i = 0; i < currentOptions.length; i++) {
-                        CheckBox checkBox = (CheckBox) optionsLinearLayout.getChildAt(i);
-                        if (checkBox.isChecked()) {
-                            currentAnswer.add(i);
-                            Log.d(LOG_TAG, "Checkbox case ---- Saving ID : " + i);
-                        }
-                    }
-                    currentQuestion.setUserSetAnswerId(currentAnswer);
-                    break;
-                case RADIOBUTTON:
-                    Log.d(LOG_TAG, "-----------RadioButton Type current questions------------");
-                    RadioGroup radioGroup = (RadioGroup) optionsLinearLayout.getChildAt(0);
-                    for (int j = 0; j < radioGroup.getChildCount(); j++) {
-                        RadioButton radioButton = (RadioButton) radioGroup.getChildAt(j);
-                        if (radioButton.isChecked()) {
-                            currentAnswer.add(j);
-                            Log.d(LOG_TAG, "Radiobutton case ---- Saving ID : " + j);
-                        }
-                    }
-                    currentQuestion.setUserSetAnswerId(currentAnswer);
-                    break;
-            }
+            saveCurrentAnswer();
 
             if (qNumber > 0) {
                 qNumber -= 1;
@@ -149,9 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 Question prevQuestion = questions.get(qNumber);
                 Options optionsType = prevQuestion.getOptionsType();
 
-//                cancelToast();
-//                toast = Toast.makeText(MainActivity.this, "Question is : " + prevQuestion.getQuestion(), Toast.LENGTH_SHORT);
-//                toast.show();
                 Log.d(LOG_TAG, "Displaying question for previous clicked QNo : " + qNumber + " is " + prevQuestion.getQuestion());
 
                 switch (optionsType) {
@@ -186,11 +148,170 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 cancelToast();
                 toast = Toast.makeText(MainActivity.this, "This is the first question", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.BOTTOM, 0, 258);
                 toast.show();
             }
 
         }
     };
+
+    private void displayResults() {
+        Intent intent = new Intent(MainActivity.this,
+                DisplayMessageActivity.class);
+        intent.putExtra(QUESTIONS, questions);
+        startActivity(intent);
+        finish();
+    }
+
+    private void saveCurrentAnswer() {
+
+        int currentQNo = qNumber;
+        Question currentQuestion = questions.get(currentQNo);
+        String[] currentOptions = currentQuestion.getOptions();
+        ArrayList<Integer> currentAnswer = new ArrayList<>();
+        String currentEditTextAnswer = null;
+
+        Log.d(LOG_TAG, "Saving answer for current Question with number " + currentQNo);
+
+        switch (optionsType) {
+            case EDITTEXT:
+                Log.d(LOG_TAG, "----------EditText Type current questions------------");
+                EditText editText = (EditText) optionsLinearLayout.getChildAt(0);
+                if (editText.getText() != null) {
+                    currentEditTextAnswer = editText.getText().toString();
+                }
+                Log.d(LOG_TAG, "EditText Case ------ Saving answer: " + currentEditTextAnswer);
+                currentQuestion.setUserAnswer(currentEditTextAnswer);
+                break;
+            case CHECKBOX:
+                Log.d(LOG_TAG, "------------Checkbox Type current questions-----------");
+                for (int i = 0; i < currentOptions.length; i++) {
+                    CheckBox checkBox = (CheckBox) optionsLinearLayout.getChildAt(i);
+                    if (checkBox.isChecked()) {
+                        currentAnswer.add(i);
+                        Log.d(LOG_TAG, "Checkbox case ---- Saving ID : " + i);
+                    }
+                }
+                currentQuestion.setUserSetAnswerId(currentAnswer);
+                break;
+            case RADIOBUTTON:
+                Log.d(LOG_TAG, "-----------RadioButton Type current questions------------");
+                RadioGroup radioGroup = (RadioGroup) optionsLinearLayout.getChildAt(0);
+                for (int j = 0; j < radioGroup.getChildCount(); j++) {
+                    RadioButton radioButton = (RadioButton) radioGroup.getChildAt(j);
+                    if (radioButton.isChecked()) {
+                        currentAnswer.add(j);
+                        Log.d(LOG_TAG, "Radiobutton case ---- Saving ID : " + j);
+                    }
+                }
+                currentQuestion.setUserSetAnswerId(currentAnswer);
+                break;
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Log.v("MainActivity", "OnCreate called");
+
+        questionTextView = findViewById(R.id.question_text);
+        numOfQuestionsTextView = findViewById(R.id.questions_remaining);
+        optionsLinearLayout = findViewById(R.id.linearLayout_Options);
+        progressBar = findViewById(R.id.determinantProgressBar);
+
+        nextButton = findViewById(R.id.next_button);
+        nextButton.setOnClickListener(nextButtonClickListener);
+
+        prevButton = findViewById(R.id.prev_button);
+        prevButton.setOnClickListener(prevButtonClickListener);
+
+
+        ImageButton reviewButton = findViewById(R.id.review_button);
+        reviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counter != null) {
+                    counter.cancel();
+                }
+                for (Question question : questions) {
+                    if (question.isMarkedForReview()) {
+                        Log.d(LOG_TAG, "Question " + question.getqNumber() + " " + question.getQuestion() + " ------ has been marked for review");
+                    }
+                }
+                saveCurrentAnswer();
+                Intent intent = new Intent(MainActivity.this, ReviewListActivity.class);
+                intent.putExtra(QUESTIONS, questions);
+                startActivity(intent);
+            }
+        });
+
+        checkedId = new ArrayList<>();
+
+        questions = QuestionSet.getQuestionSet();
+        totalQuestions = questions.size();
+
+        reviewTextView = findViewById(R.id.review_check);
+        reviewTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMarkerForReview(v);
+            }
+        });
+
+//        Intent intent = getIntent();
+//        if(intent == null) {
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(0);
+        progressBar.setMax(totalQuestions);
+//        } else {
+//            Bundle bundle = new Bundle();
+//            questions = (ArrayList<Question>) intent.getSerializableExtra(QUESTIONS);
+        /*if(intent != null) {
+            Log.d(LOG_TAG, "Intent has been received in MainActivity");
+            qNumber = intent.getIntExtra(QUESTION_NUMBER, 0);
+            displayQuestion(qNumber);
+        } else {
+            Log.d(LOG_TAG, "Intent has been received in MainActivity and it's NULL");
+        }*/
+
+//        }
+        timer = findViewById(R.id.timer_textView);
+
+        displayQuestion(qNumber);
+
+        counter = new CountDownTimer(15000, 1000) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timer.setText(String.valueOf((int) (millisUntilFinished / 1000)).concat(":00"));
+                timeRemaining = millisUntilFinished;
+            }
+
+            @Override
+            public void onFinish() {
+                cancelToast();
+                toast = Toast.makeText(MainActivity.this, "Time is up!", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.BOTTOM, 0, 258);
+                toast.show();
+                displayResults();
+            }
+        };
+//        counter.start();
+    }
+
+
+    private void setMarkerForReview(View v) {
+        if (!questions.get(qNumber).isMarkedForReview()) {
+            Log.d(LOG_TAG, "Current Question Number : " + qNumber);
+            questions.get(qNumber).setMarkedForReview(true);
+            ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box, 0, 0, 0);
+        } else {
+            questions.get(qNumber).setMarkedForReview(false);
+            ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box_outline_blank, 0, 0, 0);
+        }
+    }
 
     private void saveUserAnswer(View optionsView, String optionsType) {
 
@@ -245,64 +366,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Log.v("MainActivity", "OnCreate called");
-
-        questionTextView = findViewById(R.id.question_text);
-        numOfQuestionsTextView = findViewById(R.id.questions_remaining);
-        optionsLinearLayout = findViewById(R.id.linearLayout_Options);
-        progressBar = findViewById(R.id.determinantProgressBar);
-
-        Button nextButton = findViewById(R.id.next_button);
-        nextButton.setOnClickListener(nextButtonClickListener);
-
-        Button prevButton = findViewById(R.id.prev_button);
-        prevButton.setOnClickListener(prevButtonClickListener);
-
-        checkedId = new ArrayList<>();
-
-        questions = getQuestionsList();
-        totalQuestions = questions.size();
-
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setProgress(0);
-        progressBar.setMax(totalQuestions);
-
-        displayQuestion(qNumber);
-
-
-    }
-
-    private ArrayList<Question> getQuestionsList() {
-        ArrayList<Question> questions = new ArrayList<>();
-        Question question1 = new Question("Which famous person does Phoebe believe is her grandfather?", RADIOBUTTON, new String[]{"Albert Einstein", "Isaac Newton", "Winston Churchill", "Beethoven"}, Collections.singletonList(0));
-        questions.add(question1);
-
-        Question question2 = new Question("Who among the following belong to the Targaryen family?", Options.CHECKBOX, new String[]{"Aemon", "Rhaegar", "Ned", "Robb"}, Arrays.asList(0, 1));
-        questions.add(question2);
-
-        Question question3 = new Question("What is Sheldon's middle name?", Options.EDITTEXT, "Lee");
-        questions.add(question3);
-
-        Question question4 = new Question("What is Pied Piper?", RADIOBUTTON, new String[]{"A book", "A scary story", "A song", "A company", "A bank"}, Collections.singletonList(3));
-        questions.add(question4);
-
-        Question question5 = new Question("Which of the following are the names of fictional characters from Dan Brown novels?", CHECKBOX, new String[]{"Sophie Neveu", "Vittoria Vetra", "Nick Adams", "Robert Langdon"}, Arrays.asList(0, 1, 3));
-        questions.add(question5);
-
-        Question question6 = new Question("What color is \"The Incredible Hulk\"?", RADIOBUTTON, new String[]{"purple", "green", "blue", "grey"}, Collections.singletonList(1));
-        questions.add(question6);
-
-        Question question7 = new Question("How many seasons are there in the TV series Breaking Bad?", Options.EDITTEXT, "5");
-        questions.add(question7);
-
-        return questions;
-    }
-
     /**
      * Restore state of the quiz on activity resume after stop/pause
      * @param savedInstanceState provides access to the data prior to activity resume
@@ -338,6 +401,7 @@ public class MainActivity extends AppCompatActivity {
         cancelToast();
 
         toast = Toast.makeText(this, R.string.no_answer_error, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.BOTTOM, 0, 258);
         toast.show();
     }
 
@@ -351,6 +415,12 @@ public class MainActivity extends AppCompatActivity {
      * have different number of options and different type of views for the inputs
      */
     private void displayQuestion(int questionNumber) {
+
+        if (questions.get(qNumber).isMarkedForReview()) {
+            reviewTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box, 0, 0, 0);
+        } else {
+            reviewTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box_outline_blank, 0, 0, 0);
+        }
 
         String text = (qNumber + 1) + "/" + totalQuestions;
         numOfQuestionsTextView.setText(text);
@@ -536,5 +606,39 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
         }
+    }
+
+   /* @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "In OnResume method");
+        Intent intent = getIntent();
+        if(intent != null) {
+            Log.d(LOG_TAG, "Intent received In OnResume method");
+            qNumber = intent.getIntExtra(QUESTION_NUMBER, 0);
+            Log.d(LOG_TAG, "QNo received from intent is : " + qNumber);
+            displayQuestion(qNumber);
+        } else {
+            Log.d(LOG_TAG, "Intent has been received in MainActivity and it's NULL");
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(LOG_TAG, "In OnStart method");
+
+    }*/
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null) {
+            Log.d(LOG_TAG, "Intent received In OnNewIntent method");
+            qNumber = intent.getIntExtra(QUESTION_NUMBER, 0);
+            Log.d(LOG_TAG, "QNo received from intent is : " + qNumber);
+            displayQuestion(qNumber);
+        }
+//        setIntent(intent);
     }
 }
