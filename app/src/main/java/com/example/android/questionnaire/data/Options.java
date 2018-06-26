@@ -1,4 +1,4 @@
-package com.example.android.questionnaire;
+package com.example.android.questionnaire.data;
 
 
 public enum Options {

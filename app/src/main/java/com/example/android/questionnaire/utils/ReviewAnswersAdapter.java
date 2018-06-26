@@ -1,4 +1,4 @@
-package com.example.android.questionnaire;
+package com.example.android.questionnaire.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,14 +11,18 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.android.questionnaire.MainActivity;
+import com.example.android.questionnaire.R;
+import com.example.android.questionnaire.data.Question;
+
 import java.util.List;
 
 import static com.example.android.questionnaire.MainActivity.QUESTION_NUMBER;
 
-public class ReviewQuizAdapter extends ArrayAdapter<Question> {
+public class ReviewAnswersAdapter extends ArrayAdapter<Question> {
 
 
-    ReviewQuizAdapter(@NonNull Context context, List<Question> questions) {
+    public ReviewAnswersAdapter(@NonNull Context context, List<Question> questions) {
         super(context, 0, questions);
     }
 

@@ -18,8 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayMessageActivity" />
-        <activity android:name=".ReviewListActivity"></activity>
+        <activity android:name=".ResultsActivity" />
+        <activity android:name=".ReviewAnswersActivity"></activity>
     </application>
 
 </manifest>

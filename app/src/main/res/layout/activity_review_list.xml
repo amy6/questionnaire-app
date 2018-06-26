@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".ReviewListActivity">
+    tools:context=".ReviewAnswersActivity">
 
     <ListView
         android:id="@+id/review_listview"

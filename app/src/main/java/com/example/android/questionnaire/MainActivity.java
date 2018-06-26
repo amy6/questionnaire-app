@@ -2,7 +2,6 @@ package com.example.android.questionnaire;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -19,12 +18,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import com.example.android.questionnaire.data.Options;
+import com.example.android.questionnaire.data.Question;
+import com.example.android.questionnaire.data.QuestionSet;
 
-import static com.example.android.questionnaire.Options.CHECKBOX;
-import static com.example.android.questionnaire.Options.RADIOBUTTON;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,64 +31,56 @@ public class MainActivity extends AppCompatActivity {
     private static final String CHOSEN_ANSWER = "CHOSEN_ANSWER";
     private static final String EDITTEXT_ANSWER = "EDIT_TEXT_ANSWER";
     private static final String EDITTEXT_ANSWER_SET = "EDIT_TEXT_ANSWER_SET";
+
     private TextView questionTextView;
     private TextView numOfQuestionsTextView;
     private LinearLayout optionsLinearLayout;
     private ProgressBar progressBar;
+    private TextView reviewTextView;
     private Button nextButton;
     private Button prevButton;
-    private TextView timer;
 
     private int qNumber;
     private int totalQuestions;
     private ArrayList<Question> questions;
-
-    private Options optionsType;
-    private View optionsView;
-
     private ArrayList<Integer> checkedId;
     private String editTextAnswer;
     private boolean editTextAnswerSet;
     private boolean answered;
 
+    private Options optionsType;
+    private View optionsView;
     private Toast toast;
-    private CountDownTimer counter;
-    private long timeRemaining;
-    private TextView reviewTextView;
+
     /**
-     * Set up a listener for when the user chooses to go to the next Question
-     * - start a new activity displaying quiz stats when all questions are done
+     * Set up a listener for the next button to display next Question
+     * start a new activity displaying quiz results when all questions are done
      */
     private View.OnClickListener nextButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
 
-            if (checkedId != null) checkedId = null;
-            if (editTextAnswer != null) {
-                editTextAnswer = null;
-                editTextAnswerSet = false;
-            }
+            clearPreviousSetAnswers();
 
-            saveUserAnswer(optionsView, optionsType.toString());
+            saveUserAnswer();
             if (!answered) {
-                displayErrorMessage();
+                alertUser();
                 return;
             }
 
             qNumber++;
-            if (qNumber > 0) {
-                prevButton.setEnabled(true);
-            }
             if (qNumber < questions.size()) {
                 displayQuestion();
             } else {
-                if (counter != null) {
-                    counter.cancel();
-                }
                 displayResults();
             }
         }
     };
+
+    /**
+     * Set up a listener for the previous button to display previous Question
+     * display a toast message when button is clicked while in the first question
+     */
     private View.OnClickListener prevButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -99,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (qNumber > 0) {
                 qNumber -= 1;
-                optionsLinearLayout.removeAllViews();
-                if (checkedId != null) checkedId = null;
+                clearPreviousSetAnswers();
                 displayQuestion();
                 Question prevQuestion = questions.get(qNumber);
                 Options optionsType = prevQuestion.getOptionsType();
@@ -141,14 +130,70 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void displayResults() {
-        Intent intent = new Intent(MainActivity.this,
-                DisplayMessageActivity.class);
-        intent.putExtra(QUESTIONS, questions);
-        startActivity(intent);
-        finish();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //obtain references to all the views in the main activity
+        questionTextView = findViewById(R.id.question_text);
+        numOfQuestionsTextView = findViewById(R.id.questions_remaining);
+        optionsLinearLayout = findViewById(R.id.linearLayout_Options);
+        progressBar = findViewById(R.id.determinantProgressBar);
+
+        //register the click events for the previous and next buttons
+        prevButton = findViewById(R.id.prev_button);
+        prevButton.setOnClickListener(prevButtonClickListener);
+        nextButton = findViewById(R.id.next_button);
+        nextButton.setOnClickListener(nextButtonClickListener);
+
+        //set up the listener for 'mark for review' option
+        reviewTextView = findViewById(R.id.review_check);
+        reviewTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMarkerForReview(v);
+            }
+        });
+
+        //implement the review button click functionality to display the questions marked for review
+        ImageButton reviewButton = findViewById(R.id.review_button);
+        reviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveCurrentAnswer();
+                displayReviewQuestions();
+            }
+        });
+
+        questions = QuestionSet.getAllQuestions();
+        totalQuestions = questions.size();
+
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(0);
+        progressBar.setMax(totalQuestions);
+
+        displayQuestion();
     }
 
+    /**
+     * called when `mark for review` option is checked ot unchecked by the user
+     * @param v `marker for review` textview reference
+     */
+    private void setMarkerForReview(View v) {
+        if (!questions.get(qNumber).isMarkedForReview()) {
+            questions.get(qNumber).setMarkedForReview(true);
+            ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box, 0, 0, 0);
+        } else {
+            questions.get(qNumber).setMarkedForReview(false);
+            ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box_outline_blank, 0, 0, 0);
+        }
+    }
+
+    /**
+     * save any currently entered answers by the user when the previous button or the review button
+     * is clicked so that it can be redisplayed when the user gets back to the question
+     */
     private void saveCurrentAnswer() {
 
         int currentQNo = qNumber;
@@ -187,123 +232,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        questionTextView = findViewById(R.id.question_text);
-        numOfQuestionsTextView = findViewById(R.id.questions_remaining);
-        optionsLinearLayout = findViewById(R.id.linearLayout_Options);
-        progressBar = findViewById(R.id.determinantProgressBar);
-
-        nextButton = findViewById(R.id.next_button);
-        nextButton.setOnClickListener(nextButtonClickListener);
-
-        prevButton = findViewById(R.id.prev_button);
-        prevButton.setOnClickListener(prevButtonClickListener);
-
-
-        ImageButton reviewButton = findViewById(R.id.review_button);
-        reviewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (counter != null) {
-                    counter.cancel();
-                }
-                saveCurrentAnswer();
-                Intent intent = new Intent(MainActivity.this, ReviewListActivity.class);
-                intent.putExtra(QUESTIONS, questions);
-                startActivity(intent);
-            }
-        });
-
-        checkedId = new ArrayList<>();
-
-        questions = getAllQuestions();
-        totalQuestions = questions.size();
-
-        reviewTextView = findViewById(R.id.review_check);
-        reviewTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setMarkerForReview(v);
-            }
-        });
-
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setProgress(0);
-        progressBar.setMax(totalQuestions);
-        timer = findViewById(R.id.timer_textView);
-
-        displayQuestion();
-
-        counter = new CountDownTimer(15000, 1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timer.setText(String.valueOf((int) (millisUntilFinished / 1000)).concat(":00"));
-                timeRemaining = millisUntilFinished;
-            }
-
-            @Override
-            public void onFinish() {
-                cancelToast();
-                toast = Toast.makeText(MainActivity.this, "Time is up!", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.BOTTOM, 0, 258);
-                toast.show();
-                displayResults();
-            }
-        };
-//        counter.start();
+    /**
+     * Navigate to new activity when user presses review list button
+     * - pass the questions object in the intent to be used by the ReviewAnswersActivity
+     */
+    private void displayReviewQuestions() {
+        Intent intent = new Intent(MainActivity.this, ReviewAnswersActivity.class);
+        intent.putExtra(QUESTIONS, questions);
+        startActivity(intent);
     }
 
-    private ArrayList<Question> getAllQuestions() {
-        questions = new ArrayList<>();
-
-        Question question1 = new Question("Which famous person does Phoebe believe is her grandfather?", RADIOBUTTON, new String[]{"Albert Einstein", "Isaac Newton", "Winston Churchill", "Beethoven"}, Collections.singletonList(0));
-        questions.add(question1);
-
-        Question question2 = new Question("Who among the following belong to the Targaryen family?", Options.CHECKBOX, new String[]{"Aemon", "Rhaegar", "Ned", "Robb"}, Arrays.asList(0, 1));
-        questions.add(question2);
-
-        Question question3 = new Question("What is Sheldon's middle name?", Options.EDITTEXT, "Lee");
-        questions.add(question3);
-
-        Question question4 = new Question("What is Pied Piper?", RADIOBUTTON, new String[]{"A book", "A scary story", "A song", "A company", "A bank"}, Collections.singletonList(3));
-        questions.add(question4);
-
-        Question question5 = new Question("Which of the following are the names of fictional characters from Dan Brown novels?", CHECKBOX, new String[]{"Sophie Neveu", "Vittoria Vetra", "Nick Adams", "Robert Langdon"}, Arrays.asList(0, 1, 3));
-        questions.add(question5);
-
-        Question question6 = new Question("What color is \"The Incredible Hulk\"?", RADIOBUTTON, new String[]{"purple", "green", "blue", "grey"}, Collections.singletonList(1));
-        questions.add(question6);
-
-        Question question7 = new Question("How many seasons are there in the TV series Breaking Bad?", Options.EDITTEXT, "5");
-        questions.add(question7);
-
-        return questions;
-    }
-
-
-    private void setMarkerForReview(View v) {
-        if (!questions.get(qNumber).isMarkedForReview()) {
-            questions.get(qNumber).setMarkedForReview(true);
-            ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box, 0, 0, 0);
-        } else {
-            questions.get(qNumber).setMarkedForReview(false);
-            ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box_outline_blank, 0, 0, 0);
-        }
-    }
-
-    private void saveUserAnswer(View optionsView, String optionsType) {
+    /**
+     * save the user answer on click of next button
+     */
+    private void saveUserAnswer() {
 
         Question currentQuestion = questions.get(qNumber);
         ArrayList<Integer> userSelectedAnswers = new ArrayList<>();
 
         String answer;
 
-        switch (Options.valueOf(optionsType)) {
+        switch (optionsType) {
             case RADIOBUTTON:
 
                 int selectedId = ((RadioGroup) optionsView).getCheckedRadioButtonId();
@@ -342,13 +291,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     /**
-     * Restore state of the quiz on activity resume after stop/pause
-     *
+     * restore state of the quiz on activity resumes after stop/pause
      * @param savedInstanceState provides access to the data prior to activity resume
      */
+    @Override
     @SuppressWarnings("unchecked")
-    private void restoreSavedInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
 
         qNumber = savedInstanceState.getInt(QUESTION_NUMBER);
 
@@ -358,21 +309,14 @@ public class MainActivity extends AppCompatActivity {
         checkedId = savedInstanceState.getIntegerArrayList(CHOSEN_ANSWER);
 
         questions = (ArrayList<Question>) savedInstanceState.getSerializable(QUESTIONS);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        restoreSavedInstanceState(savedInstanceState);
 
         displayQuestion();
     }
 
     /**
-     * Display an error message to the user if no answer supplied
+     * display an alert toast message to the user if next button is clicked without answering the current question
      */
-    private void displayErrorMessage() {
+    private void alertUser() {
         cancelToast();
 
         toast = Toast.makeText(this, R.string.no_answer_error, Toast.LENGTH_SHORT);
@@ -380,6 +324,9 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
     }
 
+    /**
+     * method to handle canceling of any previously displayed toast before displaying new one
+     */
     private void cancelToast() {
         if (toast != null)
             toast.cancel();
@@ -390,6 +337,8 @@ public class MainActivity extends AppCompatActivity {
      * have different number of options and different type of views for the inputs
      */
     private void displayQuestion() {
+
+        optionsLinearLayout.removeAllViews();
 
         if (questions.get(qNumber).isMarkedForReview()) {
             reviewTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_box, 0, 0, 0);
@@ -405,14 +354,8 @@ public class MainActivity extends AppCompatActivity {
         if (answered)
             answered = false;
 
-        Question currentSet;
-        String[] optionsCurrentSet;
-
-        optionsLinearLayout.removeAllViews();
-        currentSet = questions.get(qNumber);
+        Question currentSet = questions.get(qNumber);
         questionTextView.setText(currentSet.getQuestion());
-        optionsCurrentSet = currentSet.getOptions();
-        Options type = currentSet.getOptionsType();
 
         if (qNumber == questions.size() - 1) {
             nextButton.setText(R.string.submit);
@@ -420,33 +363,26 @@ public class MainActivity extends AppCompatActivity {
             nextButton.setText(R.string.nextQuestion);
         }
 
-        displayOptions(optionsCurrentSet, type);
+        displayOptions();
 
     }
 
     /**
-     * Display the options for the given question
-     *
-     * @param options     list of options for the question
-     * @param optionsType type of view for the options
+     * display options for each question - type could be Radiobuttons, checkboxes or edittext
+     * fetch saved options from checkedId array when restoring the set answers on activity reload (orientation change)
+     * fetch saved options from question object when a user enters the main activity from the review answers activity
      */
-
-    private void displayOptions(String[] options, Options optionsType) {
+    private void displayOptions() {
 
         Question question = questions.get(qNumber);
+        String[] options = question.getOptions();
+        Options currentOptionsType = question.getOptionsType();
 
-
-        int numOfOptions = 0;
-        if (optionsType.equals(RADIOBUTTON) || optionsType.equals(Options.CHECKBOX))
-            numOfOptions = options.length;
-        String type = optionsType.toString();
-        Options opType = Options.valueOf(type);
-
-        switch (opType) {
+        switch (currentOptionsType) {
 
             case RADIOBUTTON:
                 RadioGroup radioGroup = new RadioGroup(this);
-                for (int i = 0; i < numOfOptions; i++) {
+                for (int i = 0; i < options.length; i++) {
                     RadioButton button = new RadioButton(this);
                     button.setText(options[i]);
                     button.setId(i);
@@ -471,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             case CHECKBOX:
-                for (int i = 0; i < numOfOptions; i++) {
+                for (int i = 0; i < options.length; i++) {
                     CheckBox checkbox = new CheckBox(this);
                     checkbox.setText(options[i]);
                     optionsLinearLayout.addView(checkbox);
@@ -512,24 +448,17 @@ public class MainActivity extends AppCompatActivity {
                 optionsView = editText;
                 break;
         }
-        this.optionsType = opType;
+        optionsType = currentOptionsType;
     }
-
 
     /**
      * Save the status of the quiz on activity stop/pause and restore the values
      * again when recreated
-     *
      * @param outState Bundle object used to save the state of the Activity
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        saveSetAnswers(outState);
-    }
-
-    private void saveSetAnswers(Bundle outState) {
 
         fetchSavedAnswers();
 
@@ -540,6 +469,11 @@ public class MainActivity extends AppCompatActivity {
         outState.putSerializable(QUESTIONS, questions);
     }
 
+
+    /**
+     * get the saved answers for the questions to be passed to the bundle
+     * saved answers will be restored when the activity is reloaded (ex: orientation change)
+     */
     private void fetchSavedAnswers() {
 
         checkedId = new ArrayList<>();
@@ -576,12 +510,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Navigate to new activity when user presses submit button
+     * pass the questions object in the intent to be used by the ResultsActivity
+     */
+    private void displayResults() {
+        Intent intent = new Intent(MainActivity.this,
+                ResultsActivity.class);
+        intent.putExtra(QUESTIONS, questions);
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     * new intent will be received when the user clicks on a `Go to question` button from the Review Answers activity
+     * @param intent intent object received from ReviewAnswersActivity - contains the question number to be displayed
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (intent != null) {
             qNumber = intent.getIntExtra(QUESTION_NUMBER, 0);
+
+            clearPreviousSetAnswers();
             displayQuestion();
+        }
+    }
+
+    /**
+     * clear any previously set radiobuttons/checkbox answers or edittext answers
+     */
+    private void clearPreviousSetAnswers() {
+        if (checkedId != null) {
+            checkedId = null;
+        }
+        if (editTextAnswer != null) {
+            editTextAnswer = null;
+            editTextAnswerSet = false;
         }
     }
 }

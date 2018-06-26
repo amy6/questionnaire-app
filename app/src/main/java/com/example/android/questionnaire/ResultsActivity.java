@@ -7,11 +7,15 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.widget.TextView;
 
+import com.example.android.questionnaire.data.Options;
+import com.example.android.questionnaire.data.Question;
+import com.example.android.questionnaire.utils.ResultsAdapter;
+
 import java.util.ArrayList;
 
 import static com.example.android.questionnaire.MainActivity.QUESTIONS;
 
-public class DisplayMessageActivity extends AppCompatActivity {
+public class ResultsActivity extends AppCompatActivity {
 
     private ArrayList<Question> questions;
     private boolean[] validateAnswers;
@@ -33,11 +37,11 @@ public class DisplayMessageActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.answer_text_view);
         textView.append(String.valueOf(score));
 
-        QuizStatsAdapter quizStatsAdapter = new QuizStatsAdapter(questions, validateAnswers);
+        ResultsAdapter resultsAdapter = new ResultsAdapter(questions, validateAnswers);
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(quizStatsAdapter);
+        recyclerView.setAdapter(resultsAdapter);
 
     }
 

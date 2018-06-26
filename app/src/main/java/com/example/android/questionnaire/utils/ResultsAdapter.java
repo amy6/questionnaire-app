@@ -1,4 +1,4 @@
-package com.example.android.questionnaire;
+package com.example.android.questionnaire.utils;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -9,14 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.questionnaire.R;
+import com.example.android.questionnaire.data.Options;
+import com.example.android.questionnaire.data.Question;
+
 import java.util.ArrayList;
 
-public class QuizStatsAdapter extends RecyclerView.Adapter {
+public class ResultsAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Question> questions;
     private boolean[] correctAnswers;
 
-    QuizStatsAdapter(ArrayList<Question> questions, boolean[] validateAnswers) {
+    public ResultsAdapter(ArrayList<Question> questions, boolean[] validateAnswers) {
         this.questions = questions;
         this.correctAnswers = validateAnswers;
     }

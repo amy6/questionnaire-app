@@ -7,11 +7,15 @@ import android.text.TextUtils;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.questionnaire.data.Options;
+import com.example.android.questionnaire.data.Question;
+import com.example.android.questionnaire.utils.ReviewAnswersAdapter;
+
 import java.util.ArrayList;
 
 import static com.example.android.questionnaire.MainActivity.QUESTIONS;
 
-public class ReviewListActivity extends AppCompatActivity {
+public class ReviewAnswersActivity extends AppCompatActivity {
 
     @Override
     @SuppressWarnings("unchecked")
@@ -20,12 +24,10 @@ public class ReviewListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review_list);
 
         TextView emptyTextView = findViewById(R.id.empty_textview);
-
         ListView reviewListView = findViewById(R.id.review_listview);
         reviewListView.setEmptyView(emptyTextView);
 
         Intent intent = getIntent();
-
         ArrayList<Question> questions = (ArrayList<Question>) intent.getSerializableExtra(QUESTIONS);
 
         ArrayList<Question> reviewQuestions = new ArrayList<>();
@@ -74,7 +76,7 @@ public class ReviewListActivity extends AppCompatActivity {
             }
         }
 
-        ReviewQuizAdapter quizAdapter = new ReviewQuizAdapter(ReviewListActivity.this, reviewQuestions);
+        ReviewAnswersAdapter quizAdapter = new ReviewAnswersAdapter(ReviewAnswersActivity.this, reviewQuestions);
         reviewListView.setAdapter(quizAdapter);
     }
 }

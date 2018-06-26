@@ -1,4 +1,4 @@
-package com.example.android.questionnaire;
+package com.example.android.questionnaire.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,20 +16,20 @@ public class Question implements Serializable {
     private boolean markedForReview;
     private int qNumber;
 
-    Question(String question, Options optionsType, String answer) {
+    public Question(String question, Options optionsType, String answer) {
         this.question = question;
         this.optionsType = optionsType;
         this.answer = answer;
     }
 
-    Question(String question, Options optionsType, String[] options, List<Integer> answerId) {
+    public Question(String question, Options optionsType, String[] options, List<Integer> answerId) {
         this.question = question;
         this.optionsType = optionsType;
         this.options = options;
         this.answerId = answerId;
     }
 
-    Question(String question, String answer, int qNumber) {
+    public Question(String question, String answer, int qNumber) {
         this.question = question;
         this.answer = answer;
         this.qNumber = qNumber;
