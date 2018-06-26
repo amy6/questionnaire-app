@@ -1,7 +1,7 @@
 package com.example.android.questionnaire;
 
-import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,20 +13,24 @@ import java.util.ArrayList;
 
 public class QuizStatsAdapter extends RecyclerView.Adapter {
 
-    private ArrayList<String> userAnswers;
-    private AnswerSet answerSet;
-    private Context context;
     private ArrayList<Question> questions;
     private boolean[] correctAnswers;
 
-    public QuizStatsAdapter(Context context, ArrayList<Question> questions, boolean[] validateAnswers) {
-        this.context = context;
+    QuizStatsAdapter(ArrayList<Question> questions, boolean[] validateAnswers) {
         this.questions = questions;
         this.correctAnswers = validateAnswers;
     }
 
+    @NonNull
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.quiz_stats, parent, false);
+        return new CardViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         CardViewHolder cardViewHolder = (CardViewHolder) holder;
 
         Question question = questions.get(position);
@@ -85,15 +89,6 @@ public class QuizStatsAdapter extends RecyclerView.Adapter {
         } else {
             cardViewHolder.userAnswerTextView.setTextColor(Color.RED);
         }
-
-
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.quiz_stats, parent, false);
-        return new CardViewHolder(itemView);
     }
 
     @Override

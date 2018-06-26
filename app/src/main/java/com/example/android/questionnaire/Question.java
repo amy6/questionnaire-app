@@ -16,35 +16,24 @@ public class Question implements Serializable {
     private boolean markedForReview;
     private int qNumber;
 
-    public Question(String question, Options optionsType, String answer) {
+    Question(String question, Options optionsType, String answer) {
         this.question = question;
         this.optionsType = optionsType;
         this.answer = answer;
     }
 
-    public Question(String question, Options optionsType, String[] options, List<Integer> answerId) {
+    Question(String question, Options optionsType, String[] options, List<Integer> answerId) {
         this.question = question;
         this.optionsType = optionsType;
         this.options = options;
         this.answerId = answerId;
     }
 
-    public Question(String question, String answer, int qNumber) {
+    Question(String question, String answer, int qNumber) {
         this.question = question;
         this.answer = answer;
         this.qNumber = qNumber;
     }
-
-    /*public Question(String question, Options optionsType) {
-        this.question = question;
-        this.optionsType = optionsType;
-    }
-
-    public Question(String question, String[] options, Options optionsType) {
-        this.question = question;
-        this.options = options;
-        this.optionsType = optionsType;
-    }*/
 
     public String getQuestion() {
         return question;
@@ -62,16 +51,8 @@ public class Question implements Serializable {
         return answer;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
     public List<Integer> getAnswerId() {
         return answerId;
-    }
-
-    public void setAnswerId(ArrayList<Integer> answerId) {
-        this.answerId = answerId;
     }
 
     public String getUserAnswer() {
@@ -90,19 +71,6 @@ public class Question implements Serializable {
         this.userSetAnswerId = userSetAnswerId;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public void setOptionsType(Options optionsType) {
-        this.optionsType = optionsType;
-    }
-
-    public void setOptions(String[] options) {
-        this.options = options;
-    }
-
-
     public boolean isMarkedForReview() {
         return markedForReview;
     }
@@ -115,7 +83,4 @@ public class Question implements Serializable {
         return qNumber;
     }
 
-    public void setqNumber(int qNumber) {
-        this.qNumber = qNumber;
-    }
 }

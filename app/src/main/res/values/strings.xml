@@ -1,22 +1,17 @@
 <resources>
     <string name="app_name">Questionnaire</string>
     <string name="question_one">What would make your friend happy?</string>
-    <string name="option1_four">Travelling</string>
-    <string name="option1_three">More sleep</string>
-    <string name="option1_two">Reading books</string>
-    <string name="option1_one">More time with friends and family</string>
     <string name="nextQuestion">Next</string>
-    <string name="question_two">1+1 ?</string>
-    <string name="option2_one">1</string>
-    <string name="option2_two">2</string>
-    <string name="option2_three">3</string>
-    <string name="option2_four">4</string>
-    <string name="startButton">Start</string>
-    <string name="welcome_text">Welcome to the Magical World of Harry Potter!</string>
     <string name="editText_hint">Type your answer here</string>
-    <string name="your_answer">Your answer:</string>
+    <string name="your_answer">Your answer : </string>
     <string name="correct_answer">Correct answer:</string>
-    <string name="score_text">Your score is:</string>
+    <string name="score_text">Your score is : </string>
     <string name="no_answer_error">Did you answer?</string>
     <string name="prevQuestion">Previous</string>
+    <string name="go_to_question">Go to question</string>
+    <string name="back_to_quiz">Back to Quiz</string>
+    <string name="empty_view_string">No questions marked for review</string>
+    <string name="review_button">Review List</string>
+    <string name="mark_for_review">mark for review</string>
+    <string name="submit">Submit</string>
 </resources>

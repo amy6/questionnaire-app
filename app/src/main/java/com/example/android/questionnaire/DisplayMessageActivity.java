@@ -5,12 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import static com.example.android.questionnaire.MainActivity.LOG_TAG;
 import static com.example.android.questionnaire.MainActivity.QUESTIONS;
 
 public class DisplayMessageActivity extends AppCompatActivity {
@@ -20,6 +18,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
     private int score;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_message);
@@ -28,14 +27,13 @@ public class DisplayMessageActivity extends AppCompatActivity {
         validateAnswers = validateAnswers();
 
         for (boolean b : validateAnswers) {
-            Log.d(LOG_TAG, "Validating answers: Value is:" + String.valueOf(b));
             if (b) score++;
         }
 
         TextView textView = findViewById(R.id.answer_text_view);
         textView.append(String.valueOf(score));
 
-        QuizStatsAdapter quizStatsAdapter = new QuizStatsAdapter(DisplayMessageActivity.this, questions, validateAnswers);
+        QuizStatsAdapter quizStatsAdapter = new QuizStatsAdapter(questions, validateAnswers);
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -52,9 +50,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 case CHECKBOX:
                     if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
                         int count = question.getAnswerId().size();
-                        Log.d(LOG_TAG, "Number of options to be selected: " + count);
                         if (count == question.getUserSetAnswerId().size()) {
-                            Log.d(LOG_TAG, "Number of options selected are indeed equal: " + count);
                             for (int index : question.getAnswerId()) {
                                 if (question.getUserSetAnswerId().contains(index)) {
                                     count--;

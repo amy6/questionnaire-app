@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    android:orientation="vertical"
     android:fillViewport="true"
+    android:orientation="vertical"
     tools:context="com.example.android.questionnaire.MainActivity">
 
 
@@ -50,6 +50,7 @@
             android:layout_marginRight="24dp"
             android:layout_marginTop="32dp"
             android:background="@android:color/transparent"
+            android:contentDescription="@string/review_button"
             android:src="@drawable/ic_format_list_bulleted"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -61,10 +62,10 @@
             android:layout_marginLeft="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="32dp"
-            android:text="x/n"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="x/n" />
 
         <TextView
             android:id="@+id/question_text"
@@ -103,7 +104,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical">
+            </LinearLayout>
 
         </android.support.v7.widget.CardView>
 
@@ -122,7 +124,7 @@
             android:drawablePadding="8dp"
             android:drawableStart="@drawable/ic_check_box_outline_blank"
             android:padding="16dp"
-            android:text="mark for review"
+            android:text="@string/mark_for_review"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/prev_button"
