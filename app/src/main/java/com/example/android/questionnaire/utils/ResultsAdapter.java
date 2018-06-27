@@ -15,9 +15,11 @@ import com.example.android.questionnaire.data.Question;
 
 import java.util.ArrayList;
 
-public class ResultsAdapter extends RecyclerView.Adapter {
+public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.CardViewHolder> {
 
     private ArrayList<Question> questions;
+    //a boolean array indicating which questions have been correctly answered by the user
+    //used to set the text color when displaying the answer
     private boolean[] correctAnswers;
 
     public ResultsAdapter(ArrayList<Question> questions, boolean[] validateAnswers) {
@@ -27,33 +29,34 @@ public class ResultsAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.quiz_stats, parent, false);
+                .inflate(R.layout.layout_results_list_item, parent, false);
         return new CardViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        CardViewHolder cardViewHolder = (CardViewHolder) holder;
+    public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
 
+        //get the current question and it's options
         Question question = questions.get(position);
+        String[] options = question.getOptions();
+        Options optionsType = question.getOptionsType();
 
-        cardViewHolder.questionTextView.setText(question.getQuestion());
-
+        //variables for displaying the answers
         StringBuilder correctAnswer = new StringBuilder();
         StringBuilder userAnswer = new StringBuilder();
 
-        String[] options = question.getOptions();
-
-        Options optionsType = question.getOptionsType();
         switch (optionsType) {
             case RADIOBUTTON:
+                //get the correct answer
                 correctAnswer.append(options[question.getAnswerId().get(0)]);
                 if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
                     if (correctAnswers[position]) {
+                        //if user answer is correct, then directly assign the correct answer from question object
                         userAnswer = correctAnswer;
                     } else {
+                        //get the user answer
                         userAnswer.append(options[question.getUserSetAnswerId().get(0)]);
                     }
                 }
@@ -61,37 +64,47 @@ public class ResultsAdapter extends RecyclerView.Adapter {
             case CHECKBOX:
                 for (int i = 0; i < question.getAnswerId().size(); i++) {
                     if (i > 0) correctAnswer.append(", ");
+                    //get the correct answers
                     correctAnswer.append(options[question.getAnswerId().get(i)]);
                 }
                 if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
                     if (correctAnswers[position]) {
+                        //if user answer is correct, then directly assign the correct answer from question object
                         userAnswer = correctAnswer;
                     } else {
                         for (int j = 0; j < question.getUserSetAnswerId().size(); j++) {
                             if (j > 0) userAnswer.append(", ");
+                            //get the user answers
                             userAnswer.append(options[question.getUserSetAnswerId().get(j)]);
                         }
                     }
                 }
                 break;
             case EDITTEXT:
+                //get the correct answer
                 correctAnswer.append(question.getAnswer());
                 if (!TextUtils.isEmpty(question.getUserAnswer())) {
                     if (correctAnswers[position]) {
+                        //if user answer is correct, then directly assign the correct answer from question object
                         userAnswer = correctAnswer;
                     } else {
+                        //get the user answer
+                        //set the fist letter capital in the user answer
                         userAnswer.append(question.getUserAnswer().substring(0, 1).toUpperCase()).append(question.getUserAnswer().substring(1));
                     }
                 }
                 break;
         }
 
-        cardViewHolder.correctAnswerTextView.setText(correctAnswer);
-        cardViewHolder.userAnswerTextView.setText(TextUtils.isEmpty(userAnswer) ? "Unanswered" : userAnswer);
+        //set the text views accordingly
+        holder.questionTextView.setText(question.getQuestion());
+        holder.correctAnswerTextView.setText(correctAnswer);
+        holder.userAnswerTextView.setText(TextUtils.isEmpty(userAnswer) ? "Unanswered" : userAnswer);
+        //set the text color for correct and incorrect answers
         if (correctAnswers[position]) {
-            cardViewHolder.userAnswerTextView.setTextColor(Color.GREEN);
+            holder.userAnswerTextView.setTextColor(Color.GREEN);
         } else {
-            cardViewHolder.userAnswerTextView.setTextColor(Color.RED);
+            holder.userAnswerTextView.setTextColor(Color.RED);
         }
     }
 
@@ -100,7 +113,7 @@ public class ResultsAdapter extends RecyclerView.Adapter {
         return questions.size();
     }
 
-    private class CardViewHolder extends RecyclerView.ViewHolder {
+    class CardViewHolder extends RecyclerView.ViewHolder {
 
         private TextView questionTextView;
         private TextView userAnswerTextView;

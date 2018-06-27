@@ -22,7 +22,6 @@
             android:layout_height="4dp"
             android:progressBackgroundTint="@android:color/transparent"
             android:progressTint="@android:color/white"
-            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

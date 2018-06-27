@@ -25,7 +25,7 @@ public class ResultsActivity extends AppCompatActivity {
     @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_message);
+        setContentView(R.layout.activity_results_list);
 
         questions = (ArrayList<Question>) getIntent().getSerializableExtra(QUESTIONS);
         validateAnswers = validateAnswers();
@@ -50,10 +50,13 @@ public class ResultsActivity extends AppCompatActivity {
         for (int i = 0; i < questions.size(); i++) {
             Question question = questions.get(i);
             Options opType = question.getOptionsType();
+
             switch (opType) {
                 case CHECKBOX:
                     if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
+                        //get total number of correct answers to be checked
                         int count = question.getAnswerId().size();
+                        //verify if the user has checked the same number of options
                         if (count == question.getUserSetAnswerId().size()) {
                             for (int index : question.getAnswerId()) {
                                 if (question.getUserSetAnswerId().contains(index)) {
@@ -61,6 +64,7 @@ public class ResultsActivity extends AppCompatActivity {
                                 }
                             }
                         }
+                        //set the answer as correct only if the user has selected all checkbox options required
                         if (count == 0) {
                             validateAnswers[i] = true;
                         }
@@ -68,13 +72,15 @@ public class ResultsActivity extends AppCompatActivity {
                     break;
                 case EDITTEXT:
                     if (!TextUtils.isEmpty(question.getUserAnswer())) {
+                        //compare the user answer with the correct answer
                         if (question.getAnswer().equalsIgnoreCase(question.getUserAnswer())) {
                             validateAnswers[i] = true;
                         }
                     }
                     break;
                 case RADIOBUTTON:
-                    if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {
+                    if (question.getUserSetAnswerId() != null && question.getUserSetAnswerId().size() > 0) {                        //compare the user answer with the correct answer
+                        //compare the user answer with the correct answer
                         if (question.getAnswerId().get(0).equals(question.getUserSetAnswerId().get(0))) {
                             validateAnswers[i] = true;
                         }

@@ -16,13 +16,13 @@ public class Question implements Serializable {
     private boolean markedForReview;
     private int qNumber;
 
-    public Question(String question, Options optionsType, String answer) {
+    Question(String question, Options optionsType, String answer) {
         this.question = question;
         this.optionsType = optionsType;
         this.answer = answer;
     }
 
-    public Question(String question, Options optionsType, String[] options, List<Integer> answerId) {
+    Question(String question, Options optionsType, String[] options, List<Integer> answerId) {
         this.question = question;
         this.optionsType = optionsType;
         this.options = options;

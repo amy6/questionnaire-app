@@ -30,11 +30,13 @@ public class ReviewAnswersAdapter extends ArrayAdapter<Question> {
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
+        //use a previous view if available, inflate a new one otherwise
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.layout_review_list_item, parent, false);
         }
 
         final Question question = getItem(position);
+        //get references to views in an individual list item
         TextView questionTextView = convertView.findViewById(R.id.review_question_textview);
         TextView answerTextView = convertView.findViewById(R.id.review_answer_textview);
         Button goToButton = convertView.findViewById(R.id.goto_button);
@@ -45,7 +47,10 @@ public class ReviewAnswersAdapter extends ArrayAdapter<Question> {
             goToButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //goToButton takes the user to the specific question present in the review list
                     Intent intent = new Intent(getContext(), MainActivity.class);
+                    //ensure that the activity is not reloaded, so as to preserve the state of the questions object
+                    //below set flags make sure any activities in the stack are cleared rather than restarting the target activity
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     intent.putExtra(QUESTION_NUMBER, question.getqNumber());
                     getContext().startActivity(intent);
