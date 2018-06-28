@@ -6,7 +6,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -15,6 +18,13 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        ImageView logoImage = findViewById(R.id.logo);
+        logoImage.startAnimation(AnimationUtils.loadAnimation(this, R.anim.zoom_in));
+
+        TextView welcomeText = findViewById(R.id.welcome_text);
+        welcomeText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.zoom_in));
+
+        //display the instructions in an alert dialog
         Button instructionsButton = findViewById(R.id.instructions);
         instructionsButton.setOnClickListener(new View.OnClickListener() {
             @Override

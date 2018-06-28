@@ -18,10 +18,11 @@
         <ListView
             android:id="@+id/review_listview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:divider="@null"
             android:dividerHeight="0dp"
-            android:nestedScrollingEnabled="true">
+            android:nestedScrollingEnabled="true"
+            android:background="?selectableItemBackground">
         </ListView>
 
         <TextView

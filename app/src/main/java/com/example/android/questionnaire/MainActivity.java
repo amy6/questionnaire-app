@@ -1,7 +1,9 @@
 package com.example.android.questionnaire;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -65,13 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
             /*
             increment the question number and display the next question
-            or display the results if it's the last question
+            or display the results if it's the last question after confirming for submission from the user
              */
             qNumber++;
             if (qNumber < questions.size()) {
                 displayQuestion();
             } else {
-                displayResults();
+                displayConfirmAlert("Do you want to submit the answers?", false);
             }
         }
     };
@@ -422,6 +424,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * display submission confirmation dialog to the user after all questions have been answered
+     * display quiz activity exit confimation if the back is pressed while the quiz is still ongoing
+     */
+    private void displayConfirmAlert(String message, final boolean isBackPressed) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(isBackPressed) {
+                            finish();
+                        } else {
+                            displayResults();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(dialog != null) {
+                            dialog.dismiss();
+                        }
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    /**
      * new intent will be received when the user clicks on a `Go to question` button from the Review Answers activity
      * @param intent intent object received from ReviewAnswersActivity - contains the question number to be displayed
      */
@@ -432,5 +463,14 @@ public class MainActivity extends AppCompatActivity {
             qNumber = intent.getIntExtra(QUESTION_NUMBER, 0);
             displayQuestion();
         }
+    }
+
+    /**
+     * if back is pressed while taking the quiz, alert the user that the answers will be lost
+     * and confirm exiting the quiz activity
+     */
+    @Override
+    public void onBackPressed() {
+        displayConfirmAlert("Any answers marked will be lost. Do you want to exit from the quiz?", true);
     }
 }
