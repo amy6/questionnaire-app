@@ -27,24 +27,36 @@ public class ResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results_list);
 
+        //display back arrow on ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        //get questions array list from intent passed from MainActivity
         questions = (ArrayList<Question>) getIntent().getSerializableExtra(QUESTIONS);
         validateAnswers = validateAnswers();
 
+        //set the score based on the results after validating the answers
         for (boolean b : validateAnswers) {
             if (b) score++;
         }
 
+        //display the score
         TextView textView = findViewById(R.id.answer_text_view);
         textView.append(String.valueOf(score));
 
         ResultsAdapter resultsAdapter = new ResultsAdapter(questions, validateAnswers);
-
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(resultsAdapter);
 
     }
 
+    /**
+     * validates the user answers against the correct answer
+     *
+     * @return boolean array indicating the correct answers for all the questions
+     */
     private boolean[] validateAnswers() {
         validateAnswers = new boolean[questions.size()];
         for (int i = 0; i < questions.size(); i++) {
@@ -89,5 +101,11 @@ public class ResultsActivity extends AppCompatActivity {
             }
         }
         return validateAnswers;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

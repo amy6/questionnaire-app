@@ -18,10 +18,10 @@ public class QuestionSet {
         Question question2 = new Question("Who among the following belong to the Targaryen family?", Options.CHECKBOX, new String[]{"Aemon", "Rhaegar", "Ned", "Robb"}, Arrays.asList(0, 1));
         questions.add(question2);
 
-        Question question3 = new Question("What is Sheldon's middle name?", Options.EDITTEXT, "Lee");
+        Question question3 = new Question("What is Sheldon's middle name in The Big Bang Theory?", Options.EDITTEXT, "Lee");
         questions.add(question3);
 
-        Question question4 = new Question("What is Pied Piper?", RADIOBUTTON, new String[]{"A book", "A scary story", "A song", "A company", "A bank"}, Collections.singletonList(3));
+        Question question4 = new Question("In the Television series Silicon Valley, what is Pied Piper?", RADIOBUTTON, new String[]{"A book", "A scary story", "A song", "A company", "A bank"}, Collections.singletonList(3));
         questions.add(question4);
 
         Question question5 = new Question("Which of the following are the names of fictional characters from Dan Brown novels?", CHECKBOX, new String[]{"Sophie Neveu", "Vittoria Vetra", "Nick Adams", "Robert Langdon"}, Arrays.asList(0, 1, 3));

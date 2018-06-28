@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Questionnaire</string>
+    <string name="app_name">QuizDroid</string>
     <string name="question_one">What would make your friend happy?</string>
     <string name="nextQuestion">Next</string>
     <string name="editText_hint">Type your answer here</string>
@@ -8,10 +8,14 @@
     <string name="score_text">Your score is : </string>
     <string name="no_answer_error">Did you answer?</string>
     <string name="prevQuestion">Previous</string>
-    <string name="go_to_question">Go to question</string>
-    <string name="back_to_quiz">Back to Quiz</string>
     <string name="empty_view_string">No questions marked for review</string>
     <string name="review_button">Review List</string>
     <string name="mark_for_review">mark for review</string>
     <string name="submit">Submit</string>
+    <string name="instructions">All questions are compulsory.\n\nMark questions for review by checking the \'mark for review\' checkbox. Access the review questions by clicking on the checklist button visible on top of each question. Quick jump to any question from the review list if you want to change the answer.\n\nNavigate to previously answered questions using the Previous button.</string>
+    <string name="start">Start Quiz</string>
+    <string name="welcome_text">Welcome to QuizDroid!</string>
+    <string name="results">Results</string>
+    <string name="review">Review</string>
+    <string name="read_instructions">Read Instructions</string>
 </resources>

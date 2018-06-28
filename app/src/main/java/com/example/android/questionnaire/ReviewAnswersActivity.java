@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -14,6 +16,7 @@ import com.example.android.questionnaire.utils.ReviewAnswersAdapter;
 import java.util.ArrayList;
 
 import static com.example.android.questionnaire.MainActivity.QUESTIONS;
+import static com.example.android.questionnaire.MainActivity.QUESTION_NUMBER;
 
 public class ReviewAnswersActivity extends AppCompatActivity {
 
@@ -24,6 +27,11 @@ public class ReviewAnswersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_list);
+
+        //display back arrow on ActionBar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         //get reference to ListView, set empty view for the ListView
         TextView emptyTextView = findViewById(R.id.empty_textview);
@@ -37,8 +45,24 @@ public class ReviewAnswersActivity extends AppCompatActivity {
         //ArrayList for the list of questions marked for review
         ArrayList<Question> reviewQuestions = getReviewQuestions();
 
-        ReviewAnswersAdapter quizAdapter = new ReviewAnswersAdapter(ReviewAnswersActivity.this, reviewQuestions);
+        final ReviewAnswersAdapter quizAdapter = new ReviewAnswersAdapter(ReviewAnswersActivity.this, reviewQuestions);
         reviewListView.setAdapter(quizAdapter);
+
+        //clicking on the list item takes the user to the specific question
+        reviewListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Question reviewQuestion = quizAdapter.getItem(position);
+                if (reviewQuestion != null) {
+                    Intent intent = new Intent(ReviewAnswersActivity.this, MainActivity.class);
+                    //ensure that the activity is not reloaded, so as to preserve the state of the user answers
+                    //below set flags make sure any activities in the stack are cleared rather than restarting the target activity
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.putExtra(QUESTION_NUMBER, reviewQuestion.getqNumber());
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     private ArrayList<Question> getReviewQuestions() {
@@ -102,5 +126,11 @@ public class ReviewAnswersActivity extends AppCompatActivity {
             }
         }
         return reviewQuestions;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
