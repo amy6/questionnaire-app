@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dimen_150dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/gradient_background" />
+        android:src="@drawable/gradient_background"
+        android:alpha="0.9"/>
 
     <ImageView
         android:layout_width="@dimen/dimen_150dp"

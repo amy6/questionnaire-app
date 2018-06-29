@@ -16,27 +16,11 @@
                             <entry key="launcher">
                               <value>
                                 <PersistentState>
-                                  <option name="children">
-                                    <map>
-                                      <entry key="foregroundImage">
-                                        <value>
-                                          <PersistentState>
-                                            <option name="values">
-                                              <map>
-                                                <entry key="scalingPercent" value="86" />
-                                              </map>
-                                            </option>
-                                          </PersistentState>
-                                        </value>
-                                      </entry>
-                                    </map>
-                                  </option>
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
-                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/q_logo.png" />
-                                      <entry key="previewDensity" value="XXXHIGH" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/quizdroid_logo.png" />
                                     </map>
                                   </option>
                                 </PersistentState>
