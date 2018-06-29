@@ -73,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
             if (qNumber < questions.size()) {
                 displayQuestion();
             } else {
-                displayConfirmAlert("Do you want to submit the answers?", false);
+                qNumber--;
+                displayConfirmAlert(getString(R.string.submit_confirm), false);
             }
         }
     };
@@ -388,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
     private void alertNoPrevQuestions() {
         cancelToast();
 
-        toast = Toast.makeText(MainActivity.this, "This is the first question", Toast.LENGTH_SHORT);
+        toast = Toast.makeText(MainActivity.this, R.string.no_prev_question, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.BOTTOM, 0, 258);
         toast.show();
     }
@@ -425,12 +426,12 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * display submission confirmation dialog to the user after all questions have been answered
-     * display quiz activity exit confimation if the back is pressed while the quiz is still ongoing
+     * display quiz activity exit confirmation if the back is pressed while the quiz is still ongoing
      */
     private void displayConfirmAlert(String message, final boolean isBackPressed) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.confirm_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(isBackPressed) {
@@ -440,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.confirm_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(dialog != null) {
@@ -471,6 +472,6 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        displayConfirmAlert("Any answers marked will be lost. Do you want to exit from the quiz?", true);
+        displayConfirmAlert(getString(R.string.exit_confirm), true);
     }
 }

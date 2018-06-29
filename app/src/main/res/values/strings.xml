@@ -3,9 +3,9 @@
     <string name="question_one">What would make your friend happy?</string>
     <string name="nextQuestion">Next</string>
     <string name="editText_hint">Type your answer here</string>
-    <string name="your_answer">Your answer : </string>
+    <string name="your_answer">Your answer :</string>
     <string name="correct_answer">Correct answer:</string>
-    <string name="score_text">Your score is : </string>
+    <string name="score_text">Your score is :&#160;</string>
     <string name="no_answer_error">Did you answer?</string>
     <string name="prevQuestion">Previous</string>
     <string name="empty_view_string">No questions marked for review</string>
@@ -18,4 +18,9 @@
     <string name="results">Results</string>
     <string name="review">Review</string>
     <string name="read_instructions">Read Instructions</string>
+    <string name="submit_confirm">Do you want to submit the answers?</string>
+    <string name="no_prev_question">This is the first question</string>
+    <string name="exit_confirm">Any answers marked will be lost. Do you want to exit from the quiz?</string>
+    <string name="confirm_yes">Yes</string>
+    <string name="confirm_cancel">Cancel</string>
 </resources>

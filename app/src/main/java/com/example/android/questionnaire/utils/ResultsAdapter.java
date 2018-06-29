@@ -1,7 +1,8 @@
 package com.example.android.questionnaire.utils;
 
-import android.graphics.Color;
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,12 +18,14 @@ import java.util.ArrayList;
 
 public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.CardViewHolder> {
 
+    private Context context;
     private ArrayList<Question> questions;
     //a boolean array indicating which questions have been correctly answered by the user
     //used to set the text color when displaying the answer
     private boolean[] correctAnswers;
 
-    public ResultsAdapter(ArrayList<Question> questions, boolean[] validateAnswers) {
+    public ResultsAdapter(Context context, ArrayList<Question> questions, boolean[] validateAnswers) {
+        this.context = context;
         this.questions = questions;
         this.correctAnswers = validateAnswers;
     }
@@ -102,9 +105,9 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.CardView
         holder.userAnswerTextView.setText(TextUtils.isEmpty(userAnswer) ? "Unanswered" : userAnswer);
         //set the text color for correct and incorrect answers
         if (correctAnswers[position]) {
-            holder.userAnswerTextView.setTextColor(Color.GREEN);
+            holder.userAnswerTextView.setTextColor(ContextCompat.getColor(context, R.color.green));
         } else {
-            holder.userAnswerTextView.setTextColor(Color.RED);
+            holder.userAnswerTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
         }
     }
 

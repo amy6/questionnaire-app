@@ -22,7 +22,7 @@
             android:divider="@null"
             android:dividerHeight="0dp"
             android:nestedScrollingEnabled="true"
-            android:background="?selectableItemBackground">
+            android:drawSelectorOnTop="true">
         </ListView>
 
         <TextView

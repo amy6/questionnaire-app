@@ -45,7 +45,7 @@ public class ResultsActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.answer_text_view);
         textView.append(String.valueOf(score));
 
-        ResultsAdapter resultsAdapter = new ResultsAdapter(questions, validateAnswers);
+        ResultsAdapter resultsAdapter = new ResultsAdapter(this, questions, validateAnswers);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(resultsAdapter);

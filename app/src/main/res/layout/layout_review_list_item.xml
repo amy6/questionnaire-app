@@ -15,39 +15,36 @@
 
         <TextView
             android:id="@+id/review_question_textview"
-            style="@style/CardViewText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/dimen_16dp"
             android:layout_marginStart="@dimen/dimen_16dp"
-            android:layout_marginTop="@dimen/dimen_24dp"
             android:padding="@dimen/dimen_8dp"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toTopOf="@+id/review_answer_textview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread"
-            tools:ignore="RtlHardcoded"
             tools:text="Question" />
 
         <TextView
             android:id="@+id/review_answer_textview"
-            style="@style/CardViewText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/dimen_16dp"
             android:layout_marginStart="@dimen/dimen_16dp"
             android:drawableEnd="@drawable/ic_open_in_new"
             android:paddingBottom="@dimen/dimen_8dp"
-            android:paddingStart="@dimen/dimen_8dp"
             android:paddingEnd="@dimen/dimen_8dp"
+            android:paddingStart="@dimen/dimen_8dp"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="RtlHardcoded"
-            tools:text="Question" />
+            tools:text="Answer" />
 
     </android.support.constraint.ConstraintLayout>
 
