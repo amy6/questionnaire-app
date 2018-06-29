@@ -1,6 +1,8 @@
 # quizdroid
 Android Quiz App developed as part of **Udacity Android Basics Nanodegree**
 
+Quiz contains questions based on Movies/TV series.
+
 ## App Screenshots
 
 **Welcome screen for the app and the instructions Dialog**
@@ -20,6 +22,7 @@ Android Quiz App developed as part of **Udacity Android Basics Nanodegree**
 ![results](https://user-images.githubusercontent.com/5392993/42099010-04e6da2c-7bda-11e8-8276-28414ea9c516.jpg)
 
 **Working video of the app**
+
 https://vimeo.com/277696741
 
 **Credits:**
