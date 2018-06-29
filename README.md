@@ -23,5 +23,5 @@ Android Quiz App developed as part of **Udacity Android Basics Nanodegree**
 https://vimeo.com/277696741
 
 **Credits:**
-App logo - [Shutterstock](https://www.shutterstock.com/image-vector/letter-q-logo-icon-design-template-280877756?src=gUkYaK0sdEDP8YA2IsTt0w-1-29)
-App UI reference- [Uplabs](https://www.uplabs.com/posts/quiz-app-interface)
+* App logo - [Shutterstock](https://www.shutterstock.com/image-vector/letter-q-logo-icon-design-template-280877756?src=gUkYaK0sdEDP8YA2IsTt0w-1-29)
+* App UI reference- [Uplabs](https://www.uplabs.com/posts/quiz-app-interface)
