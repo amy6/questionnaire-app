@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //get all the questions and determine the total number of questions
-        questions = QuestionSet.getAllQuestions();
+        questions = QuestionSet.getAllQuestions(this);
         totalQuestions = questions.size();
 
         //set progress bar max value

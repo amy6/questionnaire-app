@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.questionnaire.data.Options;
 import com.example.android.questionnaire.data.Question;
@@ -42,8 +42,11 @@ public class ResultsActivity extends AppCompatActivity {
         }
 
         //display the score
-        TextView textView = findViewById(R.id.answer_text_view);
-        textView.append(String.valueOf(score));
+        String message = getString(R.string.score_text)
+                .concat(String.valueOf(score))
+                .concat(getString(R.string.score_text_append))
+                .concat(String.valueOf(questions.size()));
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
         ResultsAdapter resultsAdapter = new ResultsAdapter(this, questions, validateAnswers);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);

@@ -5,7 +5,8 @@
     <string name="editText_hint">Type your answer here</string>
     <string name="your_answer">Your answer :</string>
     <string name="correct_answer">Correct answer:</string>
-    <string name="score_text">Your score is :&#160;</string>
+    <string name="score_text">Your have scored &#160;</string>
+    <string name="score_text_append">&#160; out of &#160;</string>
     <string name="no_answer_error">Did you answer?</string>
     <string name="prevQuestion">Previous</string>
     <string name="empty_view_string">No questions marked for review</string>
@@ -23,4 +24,77 @@
     <string name="exit_confirm">Any answers marked will be lost. Do you want to exit from the quiz?</string>
     <string name="confirm_yes">Yes</string>
     <string name="confirm_cancel">Cancel</string>
+
+    <string name="q1">Which famous person does Phoebe believe is her grandfather?</string>
+    <string name="q2">Who among the following belong to the Targaryen family?</string>
+    <string name="q3">What is Sheldon\'s middle name in The Big Bang Theory?</string>
+    <string name="q4">In the Television series Silicon Valley, what is Pied Piper?</string>
+    <string name="q5">Which of the following are the names of fictional characters from Dan Brown novels?</string>
+    <string name="q6">What color is \"The Incredible Hulk\"?</string>
+    <string name="q7">How many seasons are there in the TV series Breaking Bad?</string>
+
+    <string name="q1_option1">Albert Einstein</string>
+    <string name="q1_option2">Isaac Newton</string>
+    <string name="q1_option3">Winston Churchill</string>
+    <string name="q1_option4">Beethoven</string>
+    <array name="q1_options">
+        <item>@string/q1_option1</item>
+        <item>@string/q1_option2</item>
+        <item>@string/q1_option3</item>
+        <item>@string/q1_option4</item>
+    </array>
+
+    <string name="q2_option1">Aemon</string>
+    <string name="q2_option2">Rhaegar</string>
+    <string name="q2_option3">Ned</string>
+    <string name="q2_option4">Robb</string>
+    <array name="q2_options">
+        <item>@string/q2_option1</item>
+        <item>@string/q2_option2</item>
+        <item>@string/q2_option3</item>
+        <item>@string/q2_option4</item>
+    </array>
+
+
+    <string name="q3_answer">Lee</string>
+
+    <string name="q4_option1">A book</string>
+    <string name="q4_option2">A scary story</string>
+    <string name="q4_option3">A song</string>
+    <string name="q4_option4">A company</string>
+    <string name="q4_option5">A bank</string>
+    <array name="q4_options">
+        <item>@string/q4_option1</item>
+        <item>@string/q4_option2</item>
+        <item>@string/q4_option3</item>
+        <item>@string/q4_option4</item>
+        <item>@string/q4_option5</item>
+    </array>
+
+    <string name="q5_option1">Sophie Neveu</string>
+    <string name="q5_option2">Vittoria Vetra</string>
+    <string name="q5_option3">Nick Adams</string>
+    <string name="q5_option4">Robert Langdon</string>
+    <array name="q5_options">
+        <item>@string/q5_option1</item>
+        <item>@string/q5_option2</item>
+        <item>@string/q5_option3</item>
+        <item>@string/q5_option4</item>
+    </array>
+
+    <string name="q6_option1">Purple</string>
+    <string name="q6_option2">Green</string>
+    <string name="q6_option3">Blue</string>
+    <string name="q6_option4">Grey</string>
+    <array name="q6_options">
+        <item>@string/q6_option1</item>
+        <item>@string/q6_option2</item>
+        <item>@string/q6_option3</item>
+        <item>@string/q6_option4</item>
+    </array>
+
+
+    <string name="q7_answer">5</string>
+
+
 </resources>
